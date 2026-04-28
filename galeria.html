@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivo Histórico | Peña Los Magníficos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c5a059;
+            --royal-blue: #00459c;
+            --deep-navy: #002d66;
+        }
+
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* --- Header Adjustments --- */
+        #main-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* --- Custom Hero --- */
+        .galeria-hero-premium {
+            height: 450px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            margin-bottom: -60px;
+        }
+
+        .galeria-hero-premium::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 45, 102, 0.85) 0%, rgba(0, 69, 156, 0.6) 100%);
+            z-index: 1;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            padding: 0 20px;
+        }
+
+        .year-indicator {
+            background: var(--gold);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 100px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.3);
+        }
+
+        .hero-inner h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            color: white;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        /* --- Year Selector Bar --- */
+        .year-selector-bar {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto 4rem;
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .year-btn {
+            padding: 12px 25px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #64748b;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .year-btn:hover {
+            background: #f1f5f9;
+            color: var(--royal-blue);
+        }
+
+        .year-btn.active {
+            background: var(--royal-blue);
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 69, 156, 0.2);
+        }
+
+        /* --- Clean Grid --- */
+        .gallery-container {
+            max-width: 1300px;
+            margin: 0 auto 100px;
+            padding: 0 25px;
+        }
+
+        .modern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .photo-card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            height: 400px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .photo-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .photo-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0, 45, 102, 0.15);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.8s ease;
+        }
+
+        .photo-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            padding: 2.5rem 2rem;
+            background: linear-gradient(to top, rgba(0, 20, 40, 0.9) 0%, transparent 100%);
+            color: white;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .photo-card:hover .photo-overlay {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .photo-overlay h3 {
+            color: white;
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+            font-weight: 800;
+        }
+
+        .photo-overlay p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 100px 20px;
+            color: #94a3b8;
+        }
+
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(var(--gold), var(--royal-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.3;
+        }
+
+        /* --- Footer Back --- */
+        .btn-back-float {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 60px;
+            height: 60px;
+            background: var(--royal-blue);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 69, 156, 0.4);
+            z-index: 100;
+            transition: 0.3s;
+        }
+
+        .btn-back-float:hover {
+            transform: rotate(360deg) scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .hero-inner h1 { font-size: 2.5rem; }
+            .modern-grid { grid-template-columns: 1fr; }
+            .photo-card { height: 300px; }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <nav class="container nav-container">
+            <a href="index.html" class="logo"><img src="imagenes/logo-magnificos.jpg" alt="Logo" class="logo-img"> PEÑA&nbsp;<span>ARCHIVOS</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html#inicio">Inicio</a></li>
+                <li><a href="index.html#nosotros">Nosotros</a></li>
+                <li><a href="index.html#actividades">Actividades</a></li>
+                <li><a href="index.html#blog">Noticias</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="galeria-hero-premium" style="background-image: url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=1920');">
+        <div class="hero-inner">
+            <span class="year-indicator" id="year-badge">Archivo</span>
+            <h1 id="gallery-title">Galería de Fotos</h1>
+            <p style="font-size: 1.1rem; opacity: 0.9; font-weight: 300;">Explora los momentos más memorables de nuestra historia.</p>
+        </div>
+    </section>
+
+    <div class="year-selector-bar" id="year-selector">
+        <a href="?year=2025" class="year-btn" data-year="2025">2025</a>
+        <a href="?year=2024" class="year-btn" data-year="2024">2024</a>
+        <a href="?year=2023" class="year-btn" data-year="2023">2023</a>
+        <a href="?year=2022" class="year-btn" data-year="2022">2022</a>
+        <a href="?year=2021" class="year-btn" data-year="2021">2021</a>
+        <a href="?year=2020" class="year-btn" data-year="2020">2020</a>
+    </div>
+
+    <div class="gallery-container">
+        <main class="modern-grid" id="main-gallery-grid">
+            <!-- Cargando... -->
+        </main>
+    </div>
+
+    <a href="index.html" class="btn-back-float"><i class="fas fa-home"></i></a>
+
+    <footer class="galeria-footer" style="background: var(--deep-navy); color: white; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <img src="imagenes/logo-magnificos.jpg" alt="" style="width: 60px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--gold);">
+            <h2 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">PEÑA LOS MAGNÍFICOS</h2>
+            <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2026 Zaragoza. Tradición y Amistad.</p>
+        </div>
+    </footer>
+
+    <script>
+        const loadGallery = async () => {
+            const grid = document.getElementById('main-gallery-grid');
+            const title = document.getElementById('gallery-title');
+            const badge = document.getElementById('year-badge');
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const year = urlParams.get('year') || '2025';
+
+            // Activar botón del año actual
+            document.querySelectorAll('.year-btn').forEach(btn => {
+                if(btn.getAttribute('data-year') === year) btn.classList.add('active');
+            });
+
+            title.innerText = `Galería ${year}`;
+            badge.innerText = `Archivo ${year}`;
+            document.title = `Galería ${year} | Los Magníficos`;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/gallery?year=${year}`);
+                const images = await response.json();
+                
+                if (images.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-images"></i>
+                            <h2>Sin recuerdos aún</h2>
+                            <p>No se han publicado fotografías para el año ${year} todavía.</p>
+                            <a href="index.html" style="color: var(--royal-blue); font-weight: 700; text-decoration: underline; margin-top: 20px; display: inline-block;">Volver al inicio</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                grid.innerHTML = images.map((img, i) => `
+                    <div class="photo-card" style="transition-delay: ${i * 100}ms">
+                        <img src="${img.image}" alt="${img.title}" loading="lazy">
+                        <div class="photo-overlay">
+                            <p>${img.date}</p>
+                            <h3>${img.title || `Evento ${year}`}</h3>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Animación de entrada escalonada
+                setTimeout(() => {
+                    document.querySelectorAll('.photo-card').forEach(card => card.classList.add('visible'));
+                }, 100);
+
+            } catch (err) {
+                grid.innerHTML = '<div class="empty-state"><h2>Error de conexión con la base de datos.</h2></div>';
+            }
+        };
+
+        window.addEventListener('load', loadGallery);
+    </script>
+</body>
+</html>

@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const { setupDatabase } = require('./database');
@@ -11,15 +14,52 @@ const PORT = process.env.PORT || 3000;
 const SECRET_KEY = process.env.JWT_SECRET || 'magnificos_secret_key_2026';
 
 // 1. CORS: Configuración ultra-permisiva para evitar "Error de comunicación"
+// 2. MIDDLEWARES
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    origin: '*', // En desarrollo permitimos todo, luego podemos restringir a http://localhost:5173
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
-// 2. PARSERS: Límites ampliados al máximo para imágenes
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// 3. STORAGE: Configuración para guardar archivos locales
+const UPLOADS_DIR = path.resolve(__dirname, '../uploads');
+if (!fs.existsSync(UPLOADS_DIR)) {
+    fs.mkdirSync(UPLOADS_DIR, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, UPLOADS_DIR);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 }
+});
+
+// Servir la carpeta uploads
+app.use('/uploads', express.static(UPLOADS_DIR));
+
+// Endpoint para subir archivos
+app.post('/api/upload', (req, res) => {
+    upload.single('image')(req, res, function (err) {
+        if (err) {
+            console.error('Error Multer:', err);
+            return res.status(500).json({ message: 'Error al subir: ' + err.message });
+        }
+        if (!req.file) return res.status(400).json({ message: 'No hay archivo' });
+
+        const fileUrl = `/uploads/${req.file.filename}`;
+        res.json({ url: fileUrl });
+    });
+});
 
 let db;
 

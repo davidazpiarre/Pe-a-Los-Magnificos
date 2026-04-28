@@ -3,1003 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Panel Premium | Peña Los Magníficos</title>
+    <title>Administración | Peña Los Magníficos</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-light: #818cf8;
-            --accent: #06b6d4;
-            --bg-dark: #0f172a;
-            --sidebar-bg: #1e293b;
-            --card-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --text-main: #f1f5f9;
-            --text-dim: #94a3b8;
+            --primary: #00459c;
+            --primary-dark: #003375;
+            --secondary: #c5a059;
+            --bg-body: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-body);
             color: var(--text-main);
             display: flex;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* --- SIDEBAR PREMIUM --- */
+        /* --- SIDEBAR PROFESIONAL --- */
         .sidebar {
-            width: 280px;
-            background: var(--sidebar-bg);
-            padding: 2.5rem 1.5rem;
+            width: 260px;
+            background: var(--primary);
+            color: white;
             display: flex;
             flex-direction: column;
             position: fixed;
             height: 100vh;
-            border-right: 1px solid var(--glass-border);
             z-index: 1000;
         }
 
-        .sidebar-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 3.5rem;
-            padding-left: 1rem;
+        .sidebar-header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .sidebar-logo img {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
-        }
+        .sidebar-header img { width: 60px; border-radius: 50%; border: 2px solid white; margin-bottom: 10px; }
+        .sidebar-header h2 { font-size: 1rem; font-weight: 800; letter-spacing: 1px; }
 
-        .sidebar-logo h2 { font-size: 1.1rem; font-weight: 800; letter-spacing: 1px; color: white; }
-        .sidebar-logo h2 span { color: var(--accent); }
-
-        .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
-
+        .sidebar-nav { padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 5px; }
         .sidebar-nav a {
-            color: var(--text-dim);
+            color: rgba(255,255,255,0.7);
             text-decoration: none;
-            padding: 1rem 1.2rem;
-            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             gap: 12px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            font-weight: 500;
+            transition: 0.2s;
         }
 
-        .sidebar-nav a i { font-size: 1.2rem; transition: 0.3s; }
-
-        .sidebar-nav a:hover {
+        .sidebar-nav a:hover, .sidebar-nav a.active {
             color: white;
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateX(5px);
+            background: rgba(255,255,255,0.1);
         }
 
-        .sidebar-nav a.active {
-            color: white;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
-        }
-
-        .sidebar-nav a.active i { transform: scale(1.1); }
+        .sidebar-nav a.active { font-weight: 700; background: var(--secondary); color: white; }
 
         /* --- MAIN CONTENT --- */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 3rem 4rem;
-            background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.05), transparent 400px),
-                        radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.05), transparent 400px);
+        .main-content { flex: 1; margin-left: 260px; padding: 2.5rem 3rem; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
+        .top-bar h1 { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* --- CARDS & STATS --- */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            margin-bottom: 2rem;
         }
 
-        .dash-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 4rem;
-            animation: slideDown 0.8s ease-out;
-        }
-
-        .dash-header h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -1.5px; }
-        .dash-header h1 span { background: linear-gradient(to right, var(--primary-light), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .system-status {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            padding: 0.8rem 1.8rem;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            backdrop-filter: blur(10px);
-        }
-
-        .status-dot { width: 10px; height: 10px; background: #10b981; border-radius: 50%; box-shadow: 0 0 15px #10b981; animation: glow 2s infinite; }
-
-        /* --- STATS GRID --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
-        }
-
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem; }
         .stat-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            padding: 2.5rem;
-            border-radius: 32px;
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(20px);
-            transition: 0.4s;
-            animation: fadeInStagger 0.8s ease-out forwards;
-            opacity: 0;
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
+        .stat-card h3 { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; }
+        .stat-card p { font-size: 2rem; font-weight: 800; color: var(--primary); }
 
-        .stat-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
-
-        .stat-card i { position: absolute; right: -10px; bottom: -10px; font-size: 6rem; opacity: 0.03; transform: rotate(-15deg); }
-        .stat-card h3 { font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 0.8rem; }
-        .stat-card p { font-size: 3.2rem; font-weight: 800; }
-        .stat-card .trend { font-size: 0.85rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 1rem; }
-
-        /* --- SECTIONS --- */
-        .dash-section { display: none; animation: sectionFade 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .dash-section.active { display: block; }
-
-        /* --- CONTENT CARDS --- */
-        .content-container {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 35px;
-            padding: 3rem;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
+        /* --- UI ELEMENTS --- */
+        .btn {
+            padding: 0.8rem 1.5rem; border-radius: 8px; border: none; font-weight: 700; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
         }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
 
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3rem; }
-        .section-header h2 { font-size: 1.8rem; font-weight: 800; }
-
-        .btn-premium {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            border: none;
-            padding: 1.2rem 2.5rem;
-            border-radius: 20px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: 0.3s;
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.3);
+        .table { width: 100%; border-collapse: collapse; }
+        .table th { text-align: left; padding: 1rem; border-bottom: 2px solid var(--border); color: var(--text-muted); font-size: 0.85rem; }
+        .table td { padding: 1rem; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        
+        .icon-btn { 
+            width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); 
+            background: white; color: var(--text-muted); cursor: pointer; transition: 0.2s;
         }
+        .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .icon-btn.delete:hover { border-color: #ef4444; color: #ef4444; }
 
-        .btn-premium:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(79, 70, 229, 0.5); }
-
-        /* --- MODERN TABLE --- */
-        .modern-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .modern-table th { padding: 1.5rem; color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1.5px; text-align: left; }
-        .modern-table tr { transition: 0.3s; }
-        .modern-table td { padding: 1.5rem; background: rgba(255,255,255,0.02); border-top: 1px solid var(--glass-border); border-bottom: 1px solid var(--glass-border); }
-        .modern-table td:first-child { border-left: 1px solid var(--glass-border); border-radius: 20px 0 0 20px; font-weight: 700; color: var(--primary-light); }
-        .modern-table td:last-child { border-right: 1px solid var(--glass-border); border-radius: 0 20px 20px 0; text-align: right; }
-        .modern-table tr:hover td { background: rgba(255,255,255,0.05); }
-
-        .action-btn { width: 45px; height: 45px; border-radius: 14px; border: 1px solid var(--glass-border); background: transparent; color: white; cursor: pointer; transition: 0.3s; margin-left: 8px; }
-        .action-btn:hover { background: var(--primary); border-color: var(--primary); transform: scale(1.1); }
-        .btn-del:hover { background: #ef4444; border-color: #ef4444; }
-
-        /* --- FORMS --- */
-        .premium-form { display: grid; gap: 2.5rem; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
-        .form-group label { display: block; margin-bottom: 1rem; color: var(--text-dim); font-weight: 700; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 1.2rem 1.5rem;
-            background: rgba(0,0,0,0.2);
-            border: 2px solid var(--glass-border);
-            border-radius: 20px;
-            color: white;
-            font-weight: 600;
-            transition: 0.3s;
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;
         }
-        .form-group input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.3); }
 
         /* --- MODAL --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: 0.4s; }
-        .modal.active { display: flex; opacity: 1; }
-        .modal-content { background: var(--sidebar-bg); width: 90%; max-width: 800px; padding: 3.5rem; border-radius: 40px; border: 1px solid var(--glass-border); position: relative; }
-        .modal-close { position: absolute; top: 2rem; right: 2rem; font-size: 2rem; cursor: pointer; color: var(--text-dim); }
-
-        /* --- ANIMATIONS --- */
-        @keyframes glow { 0%, 100% { opacity: 1; box-shadow: 0 0 15px #10b981; } 50% { opacity: 0.5; box-shadow: 0 0 5px #10b981; } }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeInStagger { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes sectionFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        .stat-card:nth-child(1) { animation-delay: 0.1s; }
-        .stat-card:nth-child(2) { animation-delay: 0.2s; }
-        .stat-card:nth-child(3) { animation-delay: 0.3s; }
-
-        /* --- VIEW TOGGLES --- */
-        .view-toggles { display: flex; gap: 10px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 15px; border: 1px solid var(--glass-border); }
-        .view-toggle-btn { background: transparent; color: var(--text-dim); border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 1rem; }
-        .view-toggle-btn.active { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4); }
-
-        /* --- BLOG GRID PREVIEW (HOME STYLE) --- */
-        .blog-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .blog-grid.active { display: grid; }
-        .blog-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: 0.3s; color: #333; position: relative; }
-        .blog-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .blog-img { width: 100%; height: 200px; overflow: hidden; }
-        .blog-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
-        .blog-card:hover .blog-img img { transform: scale(1.1); }
-        .blog-info { padding: 1.5rem; text-align: left; }
-        .blog-date { color: var(--primary); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem; display: block; text-transform: uppercase; letter-spacing: 1px; }
-        .blog-card h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: #111; line-height: 1.4; }
-        .blog-card p { color: #666; line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .blog-link { color: var(--primary); font-weight: 700; text-decoration: none; display: inline-block; transition: 0.3s; }
-        .blog-link:hover { transform: translateX(5px); color: var(--primary-light); }
-        .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 5px; background: rgba(0,0,0,0.6); padding: 5px; border-radius: 12px; backdrop-filter: blur(5px); z-index: 10; }
-        .card-actions .action-btn { width: 35px; height: 35px; margin: 0; }
-
-        /* --- PSY DYNAMIC REPORT --- */
-        .report-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 3rem; }
-        .metric-card { background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%); border: 1px solid var(--glass-border); padding: 2rem; border-radius: 24px; position: relative; overflow: hidden; }
-        .metric-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent); transform: skewX(-20deg); animation: shine 6s infinite; }
-        .metric-title { font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-        .metric-value { font-size: 3rem; font-weight: 800; background: linear-gradient(to right, #fff, var(--primary-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .metric-change { font-size: 0.85rem; color: #10b981; display: flex; align-items: center; gap: 5px; margin-top: 10px; }
-        .metric-change.negative { color: #ef4444; }
-        .charts-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
-        .chart-container { background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); border-radius: 24px; padding: 2rem; position: relative; }
-        .chart-container h3 { font-size: 1.1rem; font-weight: 700; color: white; margin-bottom: 2rem; letter-spacing: 1px; }
-
-        /* --- REALTIME WIDGET --- */
-        .realtime-banner { background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(6, 182, 212, 0.1)); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 24px; padding: 2.5rem 3rem; display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; position: relative; overflow: hidden; box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); }
-        .realtime-banner::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 100% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 50%); pointer-events: none; }
-        .realtime-pulse { width: 18px; height: 18px; background: #10b981; border-radius: 50%; box-shadow: 0 0 20px #10b981; position: relative; margin-right: 2.5rem; flex-shrink: 0; }
-        .realtime-pulse::after { content: ''; position: absolute; top: -15px; left: -15px; right: -15px; bottom: -15px; border: 2px solid #10b981; border-radius: 50%; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite; }
-        .realtime-info { flex-grow: 1; }
-        .realtime-info h3 { font-size: 1rem; color: #10b981; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 5px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
-        .realtime-number { font-size: 5rem; font-weight: 800; color: white; line-height: 1; text-shadow: 0 0 30px rgba(16, 185, 129, 0.4); font-variant-numeric: tabular-nums; transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: inline-block; }
-        .realtime-info p { color: var(--text-dim); font-size: 0.95rem; margin-top: 10px; font-weight: 600; letter-spacing: 1px; }
-        .realtime-chart-mini { height: 80px; width: 250px; display: flex; align-items: flex-end; gap: 6px; }
-        .spark-bar { flex: 1; background: #10b981; border-radius: 4px 4px 0 0; opacity: 0.8; transition: height 0.6s ease; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
-        
-        @keyframes shine { 0% { left: -100%; } 20% { left: 200%; } 100% { left: 200%; } }
-        @keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:none; align-items:center; justify-content:center; z-index:2000; }
+        .modal.active { display:flex; }
+        .modal-content { background: white; padding: 2.5rem; border-radius: 16px; width: 95%; max-width: 550px; position: relative; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .close-modal { position: absolute; top: 1rem; right: 1rem; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; }
     </style>
 </head>
 <body>
     <aside class="sidebar">
-        <div class="sidebar-logo">
+        <div class="sidebar-header">
             <img src="imagenes/logo-magnificos.jpg" alt="Logo">
-            <h2>PEÑA <span>ADMIN</span></h2>
+            <h2>LOS MAGNÍFICOS</h2>
+            <p style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">ADMIN PANEL</p>
         </div>
         <nav class="sidebar-nav">
-            <a href="#" class="active" data-target="dash-overview"><i class="fas fa-chart-pie"></i> Panel Principal</a>
-            <a href="#blogs-manage" data-target="blogs-manage"><i class="fas fa-feather-alt"></i> Gestión Noticias</a>
-            <a href="#reports-manage" data-target="reports-manage"><i class="fas fa-chart-line"></i> Analytics & Informes</a>
-            <a href="#podcasts-manage" data-target="podcasts-manage"><i class="fas fa-podcast"></i> Podcasts</a>
-            <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
-                <a href="index.html" style="color: #ef4444;"><i class="fas fa-power-off"></i> Finalizar Sesión</a>
+            <a href="#" class="active" data-target="dash-overview"><i class="fas fa-home"></i> Resumen General</a>
+            <a href="#blogs-manage" data-target="blogs-manage"><i class="fas fa-edit"></i> Gestión Noticias</a>
+            <a href="#gallery-manage" data-target="gallery-manage"><i class="fas fa-images"></i> Galería / Archivo</a>
+            <a href="#podcasts-manage" data-target="podcasts-manage"><i class="fas fa-podcast"></i> Enlaces Podcasts</a>
+            <div style="margin-top: auto; padding: 1rem;">
+                <a href="index.html" style="color: #fda4af;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
         </nav>
     </aside>
 
     <main class="main-content">
-        <!-- OVERVIEW -->
-        <section id="dash-overview" class="dash-section active">
-            <header class="dash-header">
-                <div>
-                    <h1>Hola, <span id="admin-name">Administrador</span></h1>
-                    <p style="color: var(--text-dim); font-weight: 600; margin-top: 0.5rem;">Aquí tienes el pulso actual de la Peña.</p>
-                </div>
-                <div class="system-status">
-                    <div class="status-dot"></div>
-                    SISTEMA ACTIVO
-                </div>
-            </header>
-
+        <section id="dash-overview" class="section active">
+            <div class="top-bar"><h1>Resumen del Sistema</h1></div>
             <div class="stats-grid">
-                <div class="stat-card">
-                    <i class="fas fa-copy"></i>
-                    <h3>Noticias Publicadas</h3>
-                    <p id="count-blogs">0</p>
-                    <div class="trend"><i class="fas fa-arrow-up"></i> +12% este mes</div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-user-check"></i>
-                    <h3>Socios Oficiales</h3>
-                    <p>124</p>
-                    <div class="trend" style="color: var(--accent);"><i class="fas fa-check-circle"></i> Sincronizado</div>
-                </div>
-                <div class="stat-card">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Estado del Servidor</h3>
-                    <p style="font-size: 2rem; color: #10b981;">ÓPTIMO</p>
-                    <div class="trend"><i class="fas fa-shield-alt"></i> Protegido por Antigravity</div>
-                </div>
+                <div class="stat-card"><h3>Artículos</h3><p id="st-blogs">0</p></div>
+                <div class="stat-card"><h3>Fotos en Archivo</h3><p id="st-gal">0</p></div>
+                <div class="stat-card"><h3>Estado</h3><p style="font-size: 1.2rem; color: #10b981;">Conectado</p></div>
+            </div>
+            <div class="card">
+                <h2>Actividad Reciente</h2>
+                <p style="color: var(--text-muted); margin-top: 1rem;">Bienvenido al panel de administración. Selecciona una opción en el menú de la izquierda para comenzar a gestionar el contenido de la web.</p>
             </div>
         </section>
 
-        <!-- NOTICIAS -->
-        <section id="blogs-manage" class="dash-section">
-            <div class="content-container">
-                <div class="section-header">
-                    <h2>Gestión de Noticias</h2>
-                    <div style="display: flex; gap: 20px; align-items: center;">
-                        <div class="view-toggles">
-                            <button class="view-toggle-btn active" id="btn-view-list" title="Vista de Tabla"><i class="fas fa-list"></i></button>
-                            <button class="view-toggle-btn" id="btn-view-grid" title="Vista Previa Web"><i class="fas fa-th-large"></i></button>
-                        </div>
-                        <button class="btn-premium" id="dash-add-blog">
-                            <i class="fas fa-plus-circle"></i> CREAR ARTÍCULO
-                        </button>
-                    </div>
-                </div>
-                
-                <table class="modern-table" id="blogs-table-view">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Título de la Noticia</th>
-                            <th style="text-align: right;">Operaciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="dash-blog-list">
-                        <!-- JS Dynamic -->
-                    </tbody>
+        <section id="blogs-manage" class="section">
+            <div class="top-bar">
+                <h1>Noticias del Blog</h1>
+                <button class="btn btn-primary" id="add-blog-btn"><i class="fas fa-plus"></i> Publicar Noticia</button>
+            </div>
+            <div class="card">
+                <table class="table">
+                    <thead><tr><th>Fecha</th><th>Título</th><th>Acciones</th></tr></thead>
+                    <tbody id="blogs-tbody"></tbody>
                 </table>
-
-                <div class="blog-grid" id="blogs-grid-view">
-                    <!-- JS Dynamic -->
-                </div>
             </div>
         </section>
 
-        <!-- PODCASTS -->
-        <section id="podcasts-manage" class="dash-section">
-            <div class="content-container">
-                <div class="section-header">
-                    <h2>Gestión de Podcasts</h2>
-                </div>
-                <form id="podcast-links-form" class="premium-form">
-                    <div class="form-grid">
-                        <div style="background: rgba(255,255,255,0.02); padding: 2.5rem; border-radius: 30px; border: 1px solid var(--glass-border);">
-                            <h3 style="margin-bottom: 2rem; color: var(--primary-light); font-size: 1rem; text-transform: uppercase;">Podcast / Medio 1</h3>
-                            <div class="form-group" style="margin-bottom: 1.5rem;">
-                                <label>Destino (URL)</label>
-                                <input type="url" id="podcast1-url" placeholder="https://youtube.com/...">
-                            </div>
-                            <div class="form-group">
-                                <label>Imagen Corporativa (URL)</label>
-                                <input type="url" id="podcast1-logo" placeholder="https://...">
-                            </div>
+        <section id="gallery-manage" class="section">
+            <div class="top-bar">
+                <h1>Galería y Actividades</h1>
+                <button class="btn btn-primary" id="add-gal-btn"><i class="fas fa-upload"></i> Subir Imagen</button>
+            </div>
+            <div class="card">
+                <table class="table">
+                    <thead><tr><th>Año</th><th>Evento / Título</th><th>Miniatura</th><th>Acciones</th></tr></thead>
+                    <tbody id="gal-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="podcasts-manage" class="section">
+            <div class="top-bar"><h1>Configuración de Podcasts</h1></div>
+            <div class="card">
+                <form id="pod-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Primer Medio</h3>
+                            <div class="form-group"><label>Enlace YouTube/Web</label><input type="url" id="pod1-l"></div>
+                            <div class="form-group"><label>URL del Logo</label><input type="url" id="pod1-i"></div>
                         </div>
-                        <div style="background: rgba(255,255,255,0.02); padding: 2.5rem; border-radius: 30px; border: 1px solid var(--glass-border);">
-                            <h3 style="margin-bottom: 2rem; color: var(--accent); font-size: 1rem; text-transform: uppercase;">Podcast / Medio 2</h3>
-                            <div class="form-group" style="margin-bottom: 1.5rem;">
-                                <label>Destino (URL)</label>
-                                <input type="url" id="podcast2-url" placeholder="https://spotify.com/...">
-                            </div>
-                            <div class="form-group">
-                                <label>Imagen Corporativa (URL)</label>
-                                <input type="url" id="podcast2-logo" placeholder="https://...">
-                            </div>
+                        <div>
+                            <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Segundo Medio</h3>
+                            <div class="form-group"><label>Enlace Spotify/Web</label><input type="url" id="pod2-l"></div>
+                            <div class="form-group"><label>URL del Logo</label><input type="url" id="pod2-i"></div>
                         </div>
                     </div>
-                    <div style="display: flex; justify-content: center; align-items: center; gap: 2rem;">
-                        <button type="submit" class="btn-premium" style="min-width: 300px; justify-content: center;">
-                            <i class="fas fa-sync-alt"></i> SINCRONIZAR CAMBIOS
-                        </button>
-                    </div>
-                    <div id="podcast-status" style="text-align: center; font-weight: 800; font-size: 1.1rem; min-height: 20px;"></div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 2rem; justify-content: center;">Guardar Configuración</button>
                 </form>
-            </div>
-        </section>
-
-
-        <!-- ANALYTICS: PSY DYNAMIC REPORT -->
-        <section id="reports-manage" class="dash-section">
-            <div class="content-container">
-                <div class="section-header" style="margin-bottom: 2rem;">
-                    <div>
-                        <h2 style="font-size: 2.2rem; background: linear-gradient(to right, var(--primary-light), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Dynamic Report</h2>
-                        <p style="color: var(--text-dim); margin-top: 5px;">Análisis predictivo y de rendimiento mensual de la web.</p>
-                    </div>
-                    <button class="btn-premium" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); box-shadow: none;" onclick="exportarPDF()">
-                        <i class="fas fa-file-pdf"></i> Exportar a PDF
-                    </button>
-                </div>
-
-                <div class="realtime-banner">
-                    <div class="realtime-pulse"></div>
-                    <div class="realtime-info">
-                        <h3><i class="fas fa-satellite-dish"></i> En Vivo</h3>
-                        <div class="realtime-number" id="realtime-users">42</div>
-                        <p>Usuarios interactuando ahora mismo <span style="color: #10b981; margin: 0 5px;">•</span> <span id="realtime-pages" style="color: white; font-weight: 800;">18</span> págs/min</p>
-                    </div>
-                    <div class="realtime-chart-mini" id="spark-bars">
-                        <div class="spark-bar" style="height: 40%"></div>
-                        <div class="spark-bar" style="height: 70%"></div>
-                        <div class="spark-bar" style="height: 50%"></div>
-                        <div class="spark-bar" style="height: 90%"></div>
-                        <div class="spark-bar" style="height: 30%"></div>
-                        <div class="spark-bar" style="height: 60%"></div>
-                        <div class="spark-bar" style="height: 80%"></div>
-                        <div class="spark-bar" style="height: 40%"></div>
-                        <div class="spark-bar" style="height: 100%"></div>
-                        <div class="spark-bar" style="height: 50%"></div>
-                    </div>
-                </div>
-                
-                <div class="report-metrics">
-                    <div class="metric-card">
-                        <div class="metric-title">Sesiones Mensuales</div>
-                        <div class="metric-value">12,450</div>
-                        <div class="metric-change"><i class="fas fa-arrow-trend-up"></i> +24% vs mes anterior</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-title">Interacciones</div>
-                        <div class="metric-value">45,120</div>
-                        <div class="metric-change"><i class="fas fa-arrow-trend-up"></i> +18% vs mes anterior</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-title">Tasa de Rebote</div>
-                        <div class="metric-value">22.4%</div>
-                        <div class="metric-change negative"><i class="fas fa-arrow-trend-down"></i> -2% de mejora</div>
-                    </div>
-                </div>
-
-                <div class="charts-grid">
-                    <div class="chart-container">
-                        <h3>Flujo de Tráfico y Retención (Últimos 30 días)</h3>
-                        <canvas id="trafficChart" style="max-height: 300px;"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Demografía / Dispositivos</h3>
-                        <canvas id="deviceChart" style="max-height: 300px;"></canvas>
-                    </div>
-                </div>
-                
-                <!-- ADVANCED ANALYTICS EXPANSION -->
-                
-                <h3 style="font-size: 1.5rem; color: white; margin: 4rem 0 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;"><i class="fas fa-filter" style="color: var(--primary-light);"></i> Adquisición de Tráfico</h3>
-                <div class="charts-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 3rem;">
-                    <div class="chart-container">
-                        <h3>Canales de Adquisición</h3>
-                        <canvas id="sourceChart" style="max-height: 250px;"></canvas>
-                    </div>
-                    <div class="chart-container" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-                        <h3 style="padding: 2rem 2rem 1rem;">Top 4 Países</h3>
-                        <table class="modern-table" style="margin: 0; width: 100%; border-radius: 0; flex: 1;">
-                            <tbody id="countries-tbody">
-                                <tr style="background: rgba(255,255,255,0.02);"><td style="border-radius: 0;">1. España <span style="font-size: 1.2rem; margin-left: 5px;">🇪🇸</span></td><td style="border-radius: 0; text-align: right; font-weight: 800; color: #10b981;">85%</td></tr>
-                                <tr style="background: rgba(255,255,255,0.02);"><td style="border-radius: 0;">2. Francia <span style="font-size: 1.2rem; margin-left: 5px;">🇫🇷</span></td><td style="border-radius: 0; text-align: right; font-weight: 800; color: var(--primary-light);">5%</td></tr>
-                                <tr style="background: rgba(255,255,255,0.02);"><td style="border-radius: 0;">3. México <span style="font-size: 1.2rem; margin-left: 5px;">🇲🇽</span></td><td style="border-radius: 0; text-align: right; font-weight: 800; color: var(--primary-light);">4%</td></tr>
-                                <tr style="background: rgba(255,255,255,0.02);"><td style="border-radius: 0; border-bottom: none;">4. Argentina <span style="font-size: 1.2rem; margin-left: 5px;">🇦🇷</span></td><td style="border-radius: 0; text-align: right; border-bottom: none; font-weight: 800; color: var(--primary-light);">2%</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 1.5rem; color: white; margin: 4rem 0 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;"><i class="fas fa-mouse-pointer" style="color: var(--accent);"></i> Comportamiento del Usuario</h3>
-                <div class="charts-grid" style="grid-template-columns: 2fr 1fr; margin-bottom: 3rem;">
-                    <div class="chart-container" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
-                        <h3 style="padding: 2rem 2rem 1rem;">Páginas más visitadas</h3>
-                        <table class="modern-table" style="margin: 0; width: 100%; border-radius: 0; flex: 1;">
-                            <thead>
-                                <tr><th>Página</th><th>Visitas</th><th>T. Medio</th><th style="text-align: right;">Rebote</th></tr>
-                            </thead>
-                            <tbody id="pages-tbody">
-                                <tr><td style="border-radius: 0;">/inicio</td><td>4,521</td><td>02:15</td><td style="border-radius: 0; text-align: right; color: #10b981;">18%</td></tr>
-                                <tr><td style="border-radius: 0;">/galeria-2024</td><td>2,104</td><td>04:30</td><td style="border-radius: 0; text-align: right; color: #10b981;">12%</td></tr>
-                                <tr><td style="border-radius: 0;">/actividades</td><td>1,845</td><td>01:45</td><td style="border-radius: 0; text-align: right; color: #ef4444;">35%</td></tr>
-                                <tr><td style="border-radius: 0; border-bottom: none;">/blog/noticia-1</td><td>950</td><td>03:10</td><td style="border-radius: 0; text-align: right; border-bottom: none; color: #10b981;">20%</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="chart-container">
-                        <h3>Interacciones Diarias</h3>
-                        <canvas id="behaviorChart" style="max-height: 250px;"></canvas>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 1.5rem; color: white; margin: 4rem 0 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem;"><i class="fas fa-bolt" style="color: #10b981;"></i> Rendimiento Web (Core Web Vitals)</h3>
-                <div class="report-metrics" style="grid-template-columns: repeat(3, 1fr);">
-                    <div class="metric-card" style="text-align: center; padding: 3rem 2rem;">
-                        <div class="metric-title" style="margin-bottom: 1rem;">LCP (Carga de Imagen)</div>
-                        <div class="metric-value" style="color: #10b981; font-size: 3.5rem;">0.8s</div>
-                        <div style="color: var(--text-dim); margin-top: 15px; font-weight: 600;"><i class="fas fa-check-circle" style="color: #10b981; margin-right: 5px;"></i> Rápido (Óptimo &lt; 2.5s)</div>
-                    </div>
-                    <div class="metric-card" style="text-align: center; padding: 3rem 2rem;">
-                        <div class="metric-title" style="margin-bottom: 1rem;">FID (Interactividad)</div>
-                        <div class="metric-value" style="color: #10b981; font-size: 3.5rem;">12ms</div>
-                        <div style="color: var(--text-dim); margin-top: 15px; font-weight: 600;"><i class="fas fa-check-circle" style="color: #10b981; margin-right: 5px;"></i> Instantáneo (Óptimo &lt; 100ms)</div>
-                    </div>
-                    <div class="metric-card" style="text-align: center; padding: 3rem 2rem;">
-                        <div class="metric-title" style="margin-bottom: 1rem;">CLS (Estabilidad Visual)</div>
-                        <div class="metric-value" style="color: #10b981; font-size: 3.5rem;">0.01</div>
-                        <div style="color: var(--text-dim); margin-top: 15px; font-weight: 600;"><i class="fas fa-check-circle" style="color: #10b981; margin-right: 5px;"></i> Estable (Óptimo &lt; 0.1)</div>
-                    </div>
-                </div>
             </div>
         </section>
     </main>
 
-    <!-- MODAL -->
+    <!-- MODAL NOTICIAS -->
     <div class="modal" id="blog-modal">
         <div class="modal-content">
-            <span class="modal-close" id="blog-modal-close">&times;</span>
-            <h2 id="blog-modal-title" style="margin-bottom: 2rem; font-weight: 800; font-size: 2rem;">Gestión de Artículo</h2>
-            <form class="blog-form" id="blog-form">
-                <input type="hidden" id="blog-id">
+            <span class="close-modal">&times;</span>
+            <h2 id="blog-m-title">Publicar Noticia</h2>
+            <form id="blog-form" style="margin-top: 1.5rem;">
+                <input type="hidden" id="b-id">
+                <div class="form-group"><label>Título</label><input type="text" id="b-title" required></div>
                 <div class="form-group">
-                    <label>Título de la Noticia</label>
-                    <input type="text" id="blog-title" required placeholder="Ej: Nueva reunión mensual">
+                    <label>Imagen de la Noticia</label>
+                    <input type="file" id="b-file" accept="image/*" style="margin-bottom: 10px;" onchange="previewImage(this, 'b-preview-img')">
+                    <div id="b-preview-container" style="margin-top: 10px; text-align: center;">
+                        <img id="b-preview-img" src="" style="max-width: 100%; max-height: 150px; border-radius: 8px; display: none; border: 1px solid var(--border);">
+                    </div>
+                    <input type="hidden" id="b-img">
                 </div>
+                <div class="form-group"><label>Contenido</label><textarea id="b-content" rows="6" required></textarea></div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="blog-submit-btn">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL GALERIA -->
+    <div class="modal" id="gal-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="gal-m-title">Subir al Archivo</h2>
+            <form id="gal-form" style="margin-top: 1.5rem;">
+                <input type="hidden" id="g-id">
+                <div class="form-group"><label>Año del Evento</label><input type="number" id="g-year" required value="2025"></div>
+                <div class="form-group"><label>Título / Descripción</label><input type="text" id="g-title" required></div>
                 <div class="form-group">
-                    <label>Cabecera Visual (URL)</label>
-                    <input type="url" id="blog-image" placeholder="https://images.unsplash.com/...">
+                    <label>Seleccionar Foto</label>
+                    <input type="file" id="g-file" accept="image/*" onchange="previewImage(this, 'g-preview-img')">
+                    <div id="g-preview-container" style="margin-top: 10px; text-align: center;">
+                        <img id="g-preview-img" src="" style="max-width: 100%; max-height: 150px; border-radius: 8px; display: none; border: 1px solid var(--border);">
+                    </div>
+                    <input type="hidden" id="g-img">
                 </div>
-                <div class="form-group">
-                    <label>Contenido del Artículo</label>
-                    <textarea id="blog-content" rows="6" required placeholder="Escribe aquí el cuerpo de la noticia..."></textarea>
-                </div>
-                <button type="submit" class="btn-premium" style="width: 100%; justify-content: center;">
-                    <i class="fas fa-save"></i> PUBLICAR CAMBIOS
-                </button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="gal-submit-btn">Subir Foto</button>
             </form>
         </div>
     </div>
 
     <script>
         const token = localStorage.getItem('magnificos_token');
-        const userData = localStorage.getItem('magnificos_user');
-        const user = userData ? JSON.parse(userData) : null;
+        if (!token) window.location.href = 'index.html';
 
-        if (!token || !user || user.role !== 'admin') {
-            window.location.href = 'index.html';
-        } else {
-            document.getElementById('admin-name').innerText = user.name;
-        }
+        const api = "http://localhost:3000/api";
+        const headers = { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' };
 
-        let allBlogs = [];
-
-        // NAVEGACIÓN FLUIDA
-        function showSection(targetId) {
-            document.querySelectorAll('.dash-section').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById(targetId);
-            if (target) target.classList.add('active');
-
-            document.querySelectorAll('.sidebar-nav a').forEach(a => {
-                if (a.getAttribute('data-target') === targetId) a.classList.add('active');
-                else a.classList.remove('active');
-            });
-
-            if (targetId === 'blogs-manage') loadDashBlogs();
-            if (targetId === 'podcasts-manage') loadPodcastLinks();
-            if (targetId === 'reports-manage') initCharts();
-        }
-
-        // --- REALTIME LOGIC ---
-        let realtimeInterval;
-        function initRealtime() {
-            if (realtimeInterval) clearInterval(realtimeInterval);
+        // FUNCIÓN PARA SUBIR ARCHIVOS AL SERVIDOR
+        async function uploadImage(file) {
+            const formData = new FormData();
+            formData.append('image', file);
             
-            const usersEl = document.getElementById('realtime-users');
-            const pagesEl = document.getElementById('realtime-pages');
-            const sparkBars = document.querySelectorAll('.spark-bar');
-            
-            let baseUsers = Math.floor(Math.random() * (55 - 25) + 25);
-            
-            realtimeInterval = setInterval(() => {
-                const change = Math.floor(Math.random() * 9) - 4; 
-                baseUsers = Math.max(8, baseUsers + change);
-                
-                usersEl.style.transform = 'scale(1.1)';
-                setTimeout(() => usersEl.style.transform = 'scale(1)', 200);
-                usersEl.innerText = baseUsers;
-                
-                pagesEl.innerText = Math.floor(baseUsers * 1.8 + Math.random() * 15);
-                
-                sparkBars.forEach(bar => {
-                    const newHeight = Math.floor(Math.random() * 80 + 20);
-                    bar.style.height = `${newHeight}%`;
-                });
-            }, 3000);
-        }
-
-        // --- CHARTS LOGIC ---
-        let chartsInitialized = false;
-        async function initCharts() {
-            initRealtime();
-            if (chartsInitialized) return;
-            chartsInitialized = true;
-
-            let trafficData = [2100, 3400, 2800, 4150, 3800, 4200, 5000];
-            let devData = [65, 30, 5];
-            let devLabels = ['Móvil', 'Desktop', 'Tablet'];
-            let srcData = [5200, 3100, 2400, 1750];
-            let srcLabels = ['Orgánico', 'Directo', 'Social', 'Referido'];
-
             try {
-                const res = await fetch('http://localhost:3000/api/analytics', {
-                    headers: { 'Authorization': `Bearer ${token}` }
+                const res = await fetch(`${api}/upload`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
                 });
-                if (res.ok) {
-                    const data = await res.json();
-                    if (!data.error) {
-                        const metricValues = document.querySelectorAll('.metric-value');
-                        if (metricValues.length >= 2) {
-                            metricValues[0].innerText = (data.total + 12000).toLocaleString();
-                            metricValues[1].innerText = (data.total * 3 + 45000).toLocaleString();
-                        }
-                        if (data.last7DaysVisits) trafficData = data.last7DaysVisits;
-                        if (data.devices && data.devices.length > 0) {
-                            devData = data.devices.map(d => d.count);
-                            devLabels = data.devices.map(d => d.device);
-                        }
-                        if (data.sources && data.sources.length > 0) {
-                            srcData = data.sources.map(s => s.count);
-                            srcLabels = data.sources.map(s => s.source);
-                        }
-                        if (data.countries && data.countries.length > 0) {
-                            const tbody = document.getElementById('countries-tbody');
-                            if (tbody) {
-                                tbody.innerHTML = '';
-                                const emojis = {'España':'🇪🇸','Francia':'🇫🇷','México':'🇲🇽','Argentina':'🇦🇷','Colombia':'🇨🇴'};
-                                data.countries.forEach((c, idx) => {
-                                    const percent = Math.round((c.count / data.total) * 100);
-                                    tbody.innerHTML += `<tr style="background: rgba(255,255,255,0.02);"><td style="border-radius: 0;">${idx+1}. ${c.country} <span style="font-size: 1.2rem; margin-left: 5px;">${emojis[c.country]||'🌍'}</span></td><td style="border-radius: 0; text-align: right; font-weight: 800; color: ${idx===0?'#10b981':'var(--primary-light)'};">${percent}%</td></tr>`;
-                                });
-                            }
-                        }
-                        if (data.pages && data.pages.length > 0) {
-                            const tbody = document.getElementById('pages-tbody');
-                            if (tbody) {
-                                tbody.innerHTML = '';
-                                data.pages.forEach((p, idx) => {
-                                    const bounceRate = Math.round((p.bounces / p.visits) * 100) || 0;
-                                    const bounceColor = bounceRate > 50 ? '#ef4444' : '#10b981';
-                                    tbody.innerHTML += `<tr><td style="border-radius: 0; ${idx === data.pages.length - 1 ? 'border-bottom: none;' : ''}">${p.path}</td><td>${p.visits}</td><td>0${Math.floor(Math.random()*3)+1}:${Math.floor(Math.random()*50)+10}</td><td style="border-radius: 0; text-align: right; ${idx === data.pages.length - 1 ? 'border-bottom: none;' : ''} color: ${bounceColor};">${bounceRate}%</td></tr>`;
-                                });
-                            }
-                        }
-                    }
+                
+                const contentType = res.headers.get("content-type");
+                if (!res.ok || !contentType || !contentType.includes("application/json")) {
+                    throw new Error('El servidor no reconoce la ruta de subida. Por favor, REINICIA el comando "npm run backend" en tu terminal.');
                 }
+                
+                const data = await res.json();
+                return `http://localhost:3000${data.url}`;
             } catch (err) {
-                console.log('Utilizando datos simulados (backend de analytics no disponible aún)');
+                console.error("Error en uploadImage:", err);
+                throw err;
             }
-            
-            Chart.defaults.color = '#94a3b8';
-            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
-
-            // Traffic Chart (Line)
-            const ctxTraffic = document.getElementById('trafficChart').getContext('2d');
-            const gradient = ctxTraffic.createLinearGradient(0, 0, 0, 400);
-            gradient.addColorStop(0, 'rgba(79, 70, 229, 0.5)');
-            gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
-
-            new Chart(ctxTraffic, {
-                type: 'line',
-                data: {
-                    labels: ['L', 'M', 'X', 'J', 'V', 'S', 'D'],
-                    datasets: [{
-                        label: 'Visitas Únicas',
-                        data: trafficData,
-                        borderColor: '#818cf8',
-                        backgroundColor: gradient,
-                        borderWidth: 3,
-                        pointBackgroundColor: '#fff',
-                        pointBorderColor: '#818cf8',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
-            });
-
-            // Devices Chart (Doughnut)
-            const ctxDevice = document.getElementById('deviceChart').getContext('2d');
-            new Chart(ctxDevice, {
-                type: 'doughnut',
-                data: {
-                    labels: devLabels,
-                    datasets: [{
-                        data: devData,
-                        backgroundColor: ['#4f46e5', '#06b6d4', '#10b981'],
-                        borderWidth: 0,
-                        hoverOffset: 10
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' } } } }
-            });
-
-            // Acquisition Chart (Bar)
-            const ctxSource = document.getElementById('sourceChart').getContext('2d');
-            new Chart(ctxSource, {
-                type: 'bar',
-                data: {
-                    labels: srcLabels,
-                    datasets: [{
-                        label: 'Visitas',
-                        data: srcData,
-                        backgroundColor: ['#4f46e5', '#06b6d4', '#10b981', '#f59e0b'],
-                        borderRadius: 8,
-                        borderWidth: 0
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } } }
-            });
-
-            // Behavior Chart (Smooth Area)
-            const ctxBehavior = document.getElementById('behaviorChart').getContext('2d');
-            const gradBehavior = ctxBehavior.createLinearGradient(0, 0, 0, 300);
-            gradBehavior.addColorStop(0, 'rgba(6, 182, 212, 0.6)');
-            gradBehavior.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
-
-            const behaviorData = trafficData.map(v => Math.floor(v * 2.5));
-
-            new Chart(ctxBehavior, {
-                type: 'line',
-                data: {
-                    labels: ['L', 'M', 'X', 'J', 'V', 'S', 'D'],
-                    datasets: [{
-                        label: 'Interacciones',
-                        data: behaviorData,
-                        borderColor: '#06b6d4',
-                        backgroundColor: gradBehavior,
-                        borderWidth: 3,
-                        pointRadius: 0,
-                        fill: true,
-                        tension: 0.5
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
-            });
         }
 
-        window.exportarPDF = async function() {
-            if (!window.jspdf || !window.html2canvas) {
-                alert('Las librerías PDF todavía se están cargando. Inténtalo en un segundo.');
-                return;
+        // VISTA PREVIA DE IMAGEN
+        window.previewImage = (input, imgId) => {
+            const preview = document.getElementById(imgId);
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    preview.src = e.target.result;
+                    preview.style.display = 'inline-block';
+                }
+                reader.readAsDataURL(input.files[0]);
             }
-            
-            const btn = document.querySelector('button[onclick="exportarPDF()"]');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generando PDF...';
-            btn.style.opacity = '0.7';
-            btn.style.pointerEvents = 'none';
+        }
 
+        let currentBlogs = [];
+        let currentGallery = [];
+
+        // NAVEGACIÓN
+        document.querySelectorAll('.sidebar-nav a[data-target]').forEach(link => {
+            link.onclick = (e) => {
+                e.preventDefault();
+                const target = link.getAttribute('data-target');
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+                document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+                link.classList.add('active');
+                
+                if(target === 'blogs-manage') refreshBlogs();
+                if(target === 'gallery-manage') refreshGallery();
+                if(target === 'podcasts-manage') refreshPods();
+                if(target === 'dash-overview') refreshStats();
+            };
+        });
+
+        async function refreshStats() {
             try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('p', 'mm', 'a4');
-                const reportEl = document.getElementById('reports-manage');
-                
-                // Ocultar botón durante captura
-                btn.style.display = 'none';
+                const rb = await fetch(`${api}/blogs`);
+                const b = await rb.json();
+                const rg = await fetch(`${api}/gallery`);
+                const g = await rg.json();
+                document.getElementById('st-blogs').innerText = b.length;
+                document.getElementById('st-gal').innerText = g.length;
+            } catch (e) {}
+        }
 
-                const canvas = await html2canvas(reportEl, {
-                    scale: 2,
-                    useCORS: true,
-                    backgroundColor: '#0f172a'
-                });
-                
-                btn.style.display = 'block';
-
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                const pdfWidth = doc.internal.pageSize.getWidth();
-                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-                
-                doc.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
-                doc.save('Informe_Dynamic_Magnificos.pdf');
-            } catch(e) {
-                alert('Error al generar PDF: ' + e.message);
-                btn.style.display = 'block';
-            } finally {
-                btn.innerHTML = originalText;
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
-            }
-        };
-
-        document.querySelectorAll('.sidebar-nav a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                const tid = link.getAttribute('data-target');
-                if (tid) { e.preventDefault(); showSection(tid); }
-            });
-        });
-
-        // BLOGS & VISTAS
-        let currentBlogView = 'list';
-
-        document.getElementById('btn-view-list').addEventListener('click', () => {
-            currentBlogView = 'list';
-            document.getElementById('btn-view-list').classList.add('active');
-            document.getElementById('btn-view-grid').classList.remove('active');
-            document.getElementById('blogs-table-view').style.display = 'table';
-            document.getElementById('blogs-grid-view').classList.remove('active');
-        });
-
-        document.getElementById('btn-view-grid').addEventListener('click', () => {
-            currentBlogView = 'grid';
-            document.getElementById('btn-view-grid').classList.add('active');
-            document.getElementById('btn-view-list').classList.remove('active');
-            document.getElementById('blogs-table-view').style.display = 'none';
-            document.getElementById('blogs-grid-view').classList.add('active');
-        });
-
-        const loadDashBlogs = async () => {
+        // BLOGS
+        async function refreshBlogs() {
             try {
-                const res = await fetch('http://localhost:3000/api/blogs');
-                allBlogs = await res.json();
-                document.getElementById('count-blogs').innerText = allBlogs.length;
-                
-                const list = document.getElementById('dash-blog-list');
-                const grid = document.getElementById('blogs-grid-view');
-
-                list.innerHTML = allBlogs.map((blog, i) => `
-                    <tr style="animation: fadeInStagger 0.5s ease-out ${i * 0.05}s forwards; opacity: 0;">
-                        <td><span style="background: rgba(79, 70, 229, 0.1); color: var(--primary-light); padding: 5px 12px; border-radius: 8px; font-size: 0.8rem;">${blog.date}</span></td>
-                        <td>${blog.title}</td>
+                const res = await fetch(`${api}/blogs`);
+                currentBlogs = await res.json();
+                const tbody = document.getElementById('blogs-tbody');
+                tbody.innerHTML = currentBlogs.map(b => `
+                    <tr>
+                        <td>${b.date}</td>
+                        <td><strong>${b.title}</strong></td>
                         <td>
-                            <button class="action-btn" onclick="openEdit(${blog.id})"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-del" onclick="deleteBlog(${blog.id})"><i class="fas fa-trash-alt"></i></button>
+                            <button class="icon-btn" onclick="editBlog(${b.id})"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="icon-btn delete" onclick="deleteBlog(${b.id})"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
                 `).join('');
+            } catch (e) {}
+        }
 
-                grid.innerHTML = allBlogs.map((blog, i) => `
-                    <article class="blog-card" style="animation: fadeInStagger 0.5s ease-out ${i * 0.05}s forwards; opacity: 0;">
-                        <div class="card-actions">
-                            <button class="action-btn" style="background: rgba(255,255,255,0.2);" onclick="openEdit(${blog.id})"><i class="fas fa-edit"></i></button>
-                            <button class="action-btn btn-del" onclick="deleteBlog(${blog.id})"><i class="fas fa-trash-alt"></i></button>
-                        </div>
-                        <div class="blog-img"><img src="${blog.image || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600'}" alt=""></div>
-                        <div class="blog-info">
-                            <span class="blog-date">${blog.date}</span>
-                            <h3>${blog.title}</h3>
-                            <p>${blog.content}</p>
-                            <a href="#" class="blog-link" onclick="event.preventDefault();">Leer más →</a>
-                        </div>
-                    </article>
-                `).join('');
-            } catch (err) { console.error(err); }
-        };
-
-        window.openEdit = (id) => {
-            const blog = allBlogs.find(b => b.id === id);
-            if (blog) {
-                document.getElementById('blog-id').value = blog.id;
-                document.getElementById('blog-title').value = blog.title;
-                document.getElementById('blog-image').value = blog.image;
-                document.getElementById('blog-content').value = blog.content;
-                document.getElementById('blog-modal-title').innerText = 'Editar Noticia';
+        window.editBlog = (id) => {
+            const blog = currentBlogs.find(b => b.id === id);
+            if(blog) {
+                document.getElementById('b-id').value = blog.id;
+                document.getElementById('b-title').value = blog.title;
+                document.getElementById('b-img').value = blog.image || '';
+                document.getElementById('b-content').value = blog.content;
+                document.getElementById('blog-m-title').innerText = "Editar Noticia";
                 document.getElementById('blog-modal').classList.add('active');
             }
         };
 
         window.deleteBlog = async (id) => {
-            if (confirm('¿Deseas eliminar permanentemente esta noticia?')) {
-                await fetch(`http://localhost:3000/api/blogs/${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                loadDashBlogs();
+            if(confirm('¿Seguro que deseas eliminar esta noticia?')) {
+                await fetch(`${api}/blogs/${id}`, { method: 'DELETE', headers });
+                refreshBlogs();
             }
         };
 
-        document.getElementById('dash-add-blog').onclick = () => {
+        document.getElementById('add-blog-btn').onclick = () => {
             document.getElementById('blog-form').reset();
-            document.getElementById('blog-id').value = '';
-            document.getElementById('blog-modal-title').innerText = 'Crear Nueva Noticia';
+            document.getElementById('b-id').value = '';
+            document.getElementById('blog-m-title').innerText = "Publicar Noticia";
             document.getElementById('blog-modal').classList.add('active');
-        };
-
-        document.getElementById('blog-modal-close').onclick = () => {
-            document.getElementById('blog-modal').classList.remove('active');
         };
 
         document.getElementById('blog-form').onsubmit = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('blog-id').value;
-            const data = {
-                title: document.getElementById('blog-title').value,
-                image: document.getElementById('blog-image').value,
-                content: document.getElementById('blog-content').value
-            };
-            const method = id ? 'PUT' : 'POST';
-            const url = id ? `http://localhost:3000/api/blogs/${id}` : 'http://localhost:3000/api/blogs';
-
-            await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                body: JSON.stringify(data)
-            });
-            document.getElementById('blog-modal').classList.remove('active');
-            loadDashBlogs();
-        };
-
-        // PODCASTS
-        const loadPodcastLinks = async () => {
-            const res = await fetch('http://localhost:3000/api/settings');
-            const settings = await res.json();
-            document.getElementById('podcast1-url').value = settings.podcast1_link || '';
-            document.getElementById('podcast1-logo').value = settings.podcast1_logo || '';
-            document.getElementById('podcast2-url').value = settings.podcast2_link || '';
-            document.getElementById('podcast2-logo').value = settings.podcast2_logo || '';
-        };
-
-        document.getElementById('podcast-links-form').onsubmit = async (e) => {
-            e.preventDefault();
-            const status = document.getElementById('podcast-status');
-            status.innerText = "Sincronizando...";
-            status.style.color = "var(--primary-light)";
-            
-            const data = [
-                { key: 'podcast1_link', value: document.getElementById('podcast1-url').value },
-                { key: 'podcast1_logo', value: document.getElementById('podcast1-logo').value },
-                { key: 'podcast2_link', value: document.getElementById('podcast2-url').value },
-                { key: 'podcast2_logo', value: document.getElementById('podcast2-logo').value }
-            ];
+            const submitBtn = document.getElementById('blog-submit-btn');
+            submitBtn.innerText = "Subiendo...";
+            submitBtn.disabled = true;
 
             try {
-                const res = await fetch('http://localhost:3000/api/settings', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                    body: JSON.stringify(data)
-                });
-
-                if (res.ok) {
-                    status.innerText = "¡CAMBIOS PUBLICADOS CON ÉXITO!";
-                    status.style.color = "#10b981";
-                    setTimeout(() => status.innerText = "", 3000);
-                } else {
-                    const text = await res.text();
-                    try {
-                        const error = JSON.parse(text);
-                        if (res.status === 401 || res.status === 403) {
-                            alert('Sesión caducada. Por favor, vuelve a iniciar sesión.');
-                            window.location.href = 'index.html';
-                            return;
-                        }
-                        status.innerText = "Error: " + (error.message || 'Error al guardar');
-                        status.style.color = "#ef4444";
-                    } catch (parseError) {
-                        // Si devuelve HTML o algo que no es JSON, significa que el backend no tiene esta ruta cargada en memoria.
-                        status.innerText = "Error Crítico: Servidor desactualizado. Ve a la terminal, ciérrala (basura) y vuelve a ejecutar 'npm run backend'.";
-                        status.style.color = "#ef4444";
-                    }
+                let imageUrl = document.getElementById('b-img').value;
+                const fileInput = document.getElementById('b-file');
+                
+                // Si el usuario seleccionó un archivo nuevo, subirlo primero
+                if (fileInput.files.length > 0) {
+                    imageUrl = await uploadImage(fileInput.files[0]);
                 }
+
+                const id = document.getElementById('b-id').value;
+                const data = {
+                    title: document.getElementById('b-title').value,
+                    image: imageUrl,
+                    content: document.getElementById('b-content').value
+                };
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${api}/blogs/${id}` : `${api}/blogs`;
+                
+                await fetch(url, { method, headers, body: JSON.stringify(data) });
+                document.getElementById('blog-modal').classList.remove('active');
+                refreshBlogs();
             } catch (err) {
-                status.innerText = "Error de conexión: " + err.message;
-                status.style.color = "#ef4444";
+                alert('Error: ' + err.message);
+            } finally {
+                submitBtn.innerText = "Guardar Cambios";
+                submitBtn.disabled = false;
             }
         };
 
-        loadDashBlogs();
+        // GALLERY
+        async function refreshGallery() {
+            try {
+                const res = await fetch(`${api}/gallery`);
+                currentGallery = await res.json();
+                const tbody = document.getElementById('gal-tbody');
+                tbody.innerHTML = currentGallery.map(g => `
+                    <tr>
+                        <td><strong>${g.year}</strong></td>
+                        <td>${g.title}</td>
+                        <td><img src="${g.image}" style="width: 50px; border-radius: 4px;"></td>
+                        <td>
+                            <button class="icon-btn" onclick="editPhoto(${g.id})"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="icon-btn delete" onclick="deletePhoto(${g.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {}
+        }
+
+        window.editPhoto = (id) => {
+            const photo = currentGallery.find(g => g.id === id);
+            if(photo) {
+                document.getElementById('g-id').value = photo.id;
+                document.getElementById('g-year').value = photo.year;
+                document.getElementById('g-title').value = photo.title;
+                document.getElementById('g-img').value = photo.image;
+                
+                // Mostrar preview de la imagen actual
+                const preview = document.getElementById('g-preview-img');
+                preview.src = photo.image;
+                preview.style.display = 'inline-block';
+                
+                document.getElementById('gal-m-title').innerText = "Editar Foto / Actividad";
+                document.getElementById('gal-submit-btn').innerText = "Guardar Cambios";
+                document.getElementById('gal-modal').classList.add('active');
+            }
+        };
+
+        document.getElementById('add-gal-btn').onclick = () => {
+            document.getElementById('gal-form').reset();
+            document.getElementById('g-id').value = '';
+            document.getElementById('g-preview-img').style.display = 'none';
+            document.getElementById('gal-m-title').innerText = "Subir al Archivo";
+            document.getElementById('gal-submit-btn').innerText = "Subir Foto";
+            document.getElementById('gal-modal').classList.add('active');
+        };
+        
+        document.getElementById('gal-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('gal-submit-btn');
+            const originalText = submitBtn.innerText;
+            submitBtn.innerText = "Guardar...";
+            submitBtn.disabled = true;
+
+            try {
+                let imageUrl = document.getElementById('g-img').value;
+                const fileInput = document.getElementById('g-file');
+                const id = document.getElementById('g-id').value;
+
+                // Si no hay ID (nueva foto) y no hay archivo, error
+                if (!id && fileInput.files.length === 0) throw new Error('Selecciona una imagen');
+
+                // Si se ha seleccionado un archivo nuevo, subirlo
+                if (fileInput.files.length > 0) {
+                    imageUrl = await uploadImage(fileInput.files[0]);
+                }
+
+                const data = {
+                    year: document.getElementById('g-year').value,
+                    title: document.getElementById('g-title').value,
+                    image: imageUrl
+                };
+                
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${api}/gallery/${id}` : `${api}/gallery`;
+
+                await fetch(url, { method, headers, body: JSON.stringify(data) });
+                document.getElementById('gal-modal').classList.remove('active');
+                refreshGallery();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                submitBtn.innerText = originalText;
+                submitBtn.disabled = false;
+            }
+        };
+
+        window.deletePhoto = async (id) => {
+            if(confirm('¿Eliminar esta foto del archivo?')) {
+                await fetch(`${api}/gallery/${id}`, { method: 'DELETE', headers });
+                refreshGallery();
+            }
+        };
+
+        // PODS
+        async function refreshPods() {
+            try {
+                const res = await fetch(`${api}/settings`);
+                const s = await res.json();
+                document.getElementById('pod1-l').value = s.podcast1_link || '';
+                document.getElementById('pod1-i').value = s.podcast1_logo || '';
+                document.getElementById('pod2-l').value = s.podcast2_link || '';
+                document.getElementById('pod2-i').value = s.podcast2_logo || '';
+            } catch (e) {}
+        }
+
+        document.getElementById('pod-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = [
+                { key: 'podcast1_link', value: document.getElementById('pod1-l').value },
+                { key: 'podcast1_logo', value: document.getElementById('pod1-i').value },
+                { key: 'podcast2_link', value: document.getElementById('pod2-l').value },
+                { key: 'podcast2_logo', value: document.getElementById('pod2-i').value }
+            ];
+            await fetch(`${api}/settings`, { method: 'POST', headers, body: JSON.stringify(data) });
+            alert('Configuración guardada correctamente.');
+        };
+
+        document.querySelectorAll('.close-modal').forEach(c => c.onclick = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')));
+
+        refreshStats();
     </script>
 </body>
 </html>

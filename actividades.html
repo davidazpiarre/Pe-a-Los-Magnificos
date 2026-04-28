@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividades | Peña Los Magníficos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #00459c;
+            --accent-gold: #c5a059;
+            --bg-soft: #f4f7fa;
+        }
+
+        body { background-color: var(--bg-soft); font-family: 'Inter', sans-serif; }
+
+        .activities-hero {
+            height: 400px;
+            background: linear-gradient(rgba(0, 69, 156, 0.8), rgba(0, 45, 102, 0.9)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-content h1 { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; color: white; }
+        
+        .year-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: -30px auto 50px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .year-link {
+            background: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            font-weight: 700;
+            color: var(--primary-blue);
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .year-link:hover, .year-link.active {
+            background: var(--primary-blue);
+            color: white;
+            transform: translateY(-5px);
+        }
+
+        .activities-container { max-width: 1000px; margin: 0 auto 100px; padding: 0 20px; }
+
+        .activity-row {
+            display: flex;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+            transition: 0.4s;
+            border-left: 5px solid transparent;
+        }
+
+        .activity-row:hover { transform: scale(1.02); border-left-color: var(--primary-blue); box-shadow: 0 20px 45px rgba(0,0,0,0.08); }
+
+        .activity-image { width: 350px; min-height: 250px; flex-shrink: 0; }
+        .activity-image img { width: 100%; height: 100%; object-fit: cover; }
+
+        .activity-details { padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .activity-details .date { color: var(--accent-gold); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .activity-details h3 { font-size: 1.8rem; margin-bottom: 15px; color: #1a1a1a; }
+        .activity-details p { color: #666; line-height: 1.7; margin-bottom: 20px; }
+
+        .btn-gallery-link {
+            align-self: flex-start;
+            padding: 10px 20px;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            border-radius: 10px;
+            font-weight: 700;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn-gallery-link:hover { background: var(--primary-blue); color: white; }
+
+        @media (max-width: 768px) {
+            .activity-row { flex-direction: column; }
+            .activity-image { width: 100%; height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <header id="main-header">
+        <nav class="container nav-container">
+            <a href="index.html" class="logo"><img src="imagenes/logo-magnificos.jpg" alt="Logo" class="logo-img"> PEÑA&nbsp;<span>ARCHIVOS</span></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="galeria.html">Galería</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="activities-hero">
+        <div class="hero-content">
+            <h1 id="year-title">Actividades</h1>
+            <p>Cronología de eventos y momentos compartidos</p>
+        </div>
+    </section>
+
+    <div class="year-selector" id="year-selector">
+        <!-- Generado por JS -->
+    </div>
+
+    <div class="activities-container" id="activities-list">
+        <!-- Generado por JS -->
+    </div>
+
+    <footer style="background: #1a1a1a; color: white; padding: 40px 0; text-align: center;">
+        <p>&copy; 2026 Peña Los Magníficos</p>
+    </footer>
+
+    <script>
+        const years = [2025, 2024, 2023, 2022, 2021, 2020];
+        
+        const loadActivities = async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentYear = urlParams.get('year') || '2025';
+            
+            document.getElementById('year-title').innerText = `Actividades ${currentYear}`;
+            
+            // Generar selector de años
+            const selector = document.getElementById('year-selector');
+            selector.innerHTML = years.map(y => `
+                <a href="?year=${y}" class="year-link ${y == currentYear ? 'active' : ''}">${y}</a>
+            `).join('');
+
+            const list = document.getElementById('activities-list');
+            
+            try {
+                const response = await fetch(`http://localhost:3000/api/gallery?year=${currentYear}`);
+                const data = await response.json();
+                
+                if (data.length === 0) {
+                    list.innerHTML = `<div style="text-align:center; padding: 100px; opacity:0.5;"><h2>No hay actividades registradas en ${currentYear}</h2></div>`;
+                    return;
+                }
+
+                list.innerHTML = data.map(act => `
+                    <div class="activity-row">
+                        <div class="activity-image">
+                            <img src="${act.image}" alt="${act.title}">
+                        </div>
+                        <div class="activity-details">
+                            <span class="date">${act.date}</span>
+                            <h3>${act.title || 'Evento de la Peña'}</h3>
+                            <p>Descripción del evento realizado por la peña en el año ${currentYear}. Un momento de convivencia y alegría entre todos los socios, celebrando nuestras tradiciones en Zaragoza.</p>
+                            <a href="galeria.html?year=${currentYear}" class="btn-gallery-link">Ver fotos en Galería</a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = `<div style="text-align:center; padding: 100px; color:red;"><h2>Error al cargar actividades</h2></div>`;
+            }
+        };
+
+        window.onload = loadActivities;
+    </script>
+</body>
+</html>
