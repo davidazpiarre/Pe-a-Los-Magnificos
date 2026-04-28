@@ -26,7 +26,48 @@ async function setupDatabase() {
             author_id INTEGER,
             FOREIGN KEY(author_id) REFERENCES users(id)
         );
+
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS gallery (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            year TEXT,
+            title TEXT,
+            image TEXT,
+            date TEXT
+        );
+
+        CREATE TABLE IF NOT EXISTS analytics (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            path TEXT,
+            country TEXT,
+            device TEXT,
+            source TEXT,
+            bounce INTEGER DEFAULT 0,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        );
     `);
+
+    // Inicializar configuración por defecto si no existe
+    const podcast1 = await db.get('SELECT * FROM settings WHERE key = ?', ['podcast1_link']);
+    if (!podcast1) {
+        await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['podcast1_link', 'https://youtube.com/@podcast1']);
+    }
+    const podcast2 = await db.get('SELECT * FROM settings WHERE key = ?', ['podcast2_link']);
+    if (!podcast2) {
+        await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['podcast2_link', 'https://spotify.com/podcast2']);
+    }
+    const logo1 = await db.get('SELECT * FROM settings WHERE key = ?', ['podcast1_logo']);
+    if (!logo1) {
+        await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['podcast1_logo', 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=100&h=100&fit=crop']);
+    }
+    const logo2 = await db.get('SELECT * FROM settings WHERE key = ?', ['podcast2_logo']);
+    if (!logo2) {
+        await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['podcast2_logo', 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=100&h=100&fit=crop']);
+    }
 
     // Crear un usuario de prueba si no hay ninguno
     const adminExists = await db.get('SELECT * FROM users WHERE username = ?', ['admin']);

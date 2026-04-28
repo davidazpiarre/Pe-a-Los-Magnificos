@@ -144,4 +144,88 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     loadBlogs();
+
+    // --- Load Settings (Podcast Links) ---
+    const loadSettings = async () => {
+        try {
+            const res = await fetch('http://localhost:3000/api/settings?t=' + Date.now());
+            const settings = await res.json();
+
+            const p1 = document.getElementById('podcast-link-1');
+            const p2 = document.getElementById('podcast-link-2');
+
+            if (p1) {
+                if (settings.podcast1_link) p1.href = settings.podcast1_link;
+                if (settings.podcast1_logo) {
+                    const img = p1.querySelector('img');
+                    if (img) {
+                        const isBase64 = settings.podcast1_logo.startsWith('data:');
+                        img.src = isBase64 ? settings.podcast1_logo : `${settings.podcast1_logo}${settings.podcast1_logo.includes('?') ? '&' : '?'}v=${Date.now()}`;
+                    }
+                }
+            }
+            if (p2) {
+                if (settings.podcast2_link) p2.href = settings.podcast2_link;
+                if (settings.podcast2_logo) {
+                    const img = p2.querySelector('img');
+                    if (img) {
+                        const isBase64 = settings.podcast2_logo.startsWith('data:');
+                        img.src = isBase64 ? settings.podcast2_logo : `${settings.podcast2_logo}${settings.podcast2_logo.includes('?') ? '&' : '?'}v=${Date.now()}`;
+                    }
+                }
+            }
+        } catch (err) {
+            console.error("Error al cargar configuración:", err);
+        }
+    };
+
+    loadSettings();
+
+    // --- SCROLL REVEAL ANIMATIONS ---
+    const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-zoom');
+    
+    const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target); // Animate only once
+            }
+        });
+    };
+
+    const revealOptions = {
+        threshold: 0.15,
+        rootMargin: "0px 0px -50px 0px"
+    };
+
+    const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+    revealElements.forEach(el => revealObserver.observe(el));
 });
+
+// --- TRACKING ANALYTICS EN TIEMPO REAL ---
+(function() {
+    // Solo rastreamos en páginas públicas, no en el dashboard
+    if(window.location.pathname.includes('dashboard')) return;
+
+    const deviceMatch = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/);
+    const deviceType = deviceMatch ? 'Móvil' : 'Desktop';
+    const isSocial = document.referrer.includes('facebook') || document.referrer.includes('twitter') || document.referrer.includes('instagram');
+    const source = isSocial ? 'Social' : (document.referrer ? 'Referido' : 'Directo');
+    // Para simplificar, asignamos "España" pero un caso real usaría una API GeoIP
+    const country = 'España'; 
+
+    setTimeout(() => {
+        // Enviar tracking después de 2 segundos (bounce falso si se va antes)
+        fetch('http://localhost:3000/api/track', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                path: window.location.pathname === '/' || window.location.pathname === '' ? '/inicio' : window.location.pathname,
+                country: country,
+                device: deviceType,
+                source: source,
+                bounce: 0 // Si llegó hasta aquí, no es rebote
+            })
+        }).catch(err => console.log('Tracking no disponible en este entorno.'));
+    }, 2000);
+})();
