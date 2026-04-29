@@ -195,11 +195,13 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                         <div>
                             <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Primer Medio</h3>
+                            <div class="form-group"><label>Nombre del Podcast</label><input type="text" id="pod1-t" placeholder="Ej: Los Magníficos Radio"></div>
                             <div class="form-group"><label>Enlace YouTube/Web</label><input type="url" id="pod1-l"></div>
                             <div class="form-group"><label>URL del Logo</label><input type="url" id="pod1-i"></div>
                         </div>
                         <div>
                             <h3 style="margin-bottom: 1.5rem; color: var(--primary);">Segundo Medio</h3>
+                            <div class="form-group"><label>Nombre del Podcast</label><input type="text" id="pod2-t" placeholder="Ej: Entrevistas Magníficas"></div>
                             <div class="form-group"><label>Enlace Spotify/Web</label><input type="url" id="pod2-l"></div>
                             <div class="form-group"><label>URL del Logo</label><input type="url" id="pod2-i"></div>
                         </div>
@@ -510,8 +512,10 @@
             try {
                 const res = await fetch(`${api}/settings`);
                 const s = await res.json();
+                document.getElementById('pod1-t').value = s.podcast1_title || '';
                 document.getElementById('pod1-l').value = s.podcast1_link || '';
                 document.getElementById('pod1-i').value = s.podcast1_logo || '';
+                document.getElementById('pod2-t').value = s.podcast2_title || '';
                 document.getElementById('pod2-l').value = s.podcast2_link || '';
                 document.getElementById('pod2-i').value = s.podcast2_logo || '';
             } catch (e) {}
@@ -520,8 +524,10 @@
         document.getElementById('pod-form').onsubmit = async (e) => {
             e.preventDefault();
             const data = [
+                { key: 'podcast1_title', value: document.getElementById('pod1-t').value },
                 { key: 'podcast1_link', value: document.getElementById('pod1-l').value },
                 { key: 'podcast1_logo', value: document.getElementById('pod1-i').value },
+                { key: 'podcast2_title', value: document.getElementById('pod2-t').value },
                 { key: 'podcast2_link', value: document.getElementById('pod2-l').value },
                 { key: 'podcast2_logo', value: document.getElementById('pod2-i').value }
             ];
