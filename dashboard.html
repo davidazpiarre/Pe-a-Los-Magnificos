@@ -141,6 +141,7 @@
             <a href="#" class="active" data-target="dash-overview"><i class="fas fa-home"></i> Resumen General</a>
             <a href="#blogs-manage" data-target="blogs-manage"><i class="fas fa-edit"></i> Gestión Noticias</a>
             <a href="#gallery-manage" data-target="gallery-manage"><i class="fas fa-images"></i> Galería / Archivo</a>
+            <a href="#activities-manage" data-target="activities-manage"><i class="fas fa-calendar-check"></i> Organizar Actividades</a>
             <a href="#podcasts-manage" data-target="podcasts-manage"><i class="fas fa-podcast"></i> Enlaces Podcasts</a>
             <div style="margin-top: auto; padding: 1rem;">
                 <a href="index.html" style="color: #fda4af;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
@@ -153,8 +154,8 @@
             <div class="top-bar"><h1>Resumen del Sistema</h1></div>
             <div class="stats-grid">
                 <div class="stat-card"><h3>Artículos</h3><p id="st-blogs">0</p></div>
-                <div class="stat-card"><h3>Fotos en Archivo</h3><p id="st-gal">0</p></div>
-                <div class="stat-card"><h3>Estado</h3><p style="font-size: 1.2rem; color: #10b981;">Conectado</p></div>
+                <div class="stat-card"><h3>Fotos</h3><p id="st-gal">0</p></div>
+                <div class="stat-card"><h3>Actividades</h3><p id="st-act">0</p></div>
             </div>
             <div class="card">
                 <h2>Actividad Reciente</h2>
@@ -177,13 +178,26 @@
 
         <section id="gallery-manage" class="section">
             <div class="top-bar">
-                <h1>Galería y Actividades</h1>
+                <h1>Galería y Archivo</h1>
                 <button class="btn btn-primary" id="add-gal-btn"><i class="fas fa-upload"></i> Subir Imagen</button>
             </div>
             <div class="card">
                 <table class="table">
                     <thead><tr><th>Año</th><th>Evento / Título</th><th>Miniatura</th><th>Acciones</th></tr></thead>
                     <tbody id="gal-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="activities-manage" class="section">
+            <div class="top-bar">
+                <h1>Organizar Actividades</h1>
+                <button class="btn btn-primary" id="add-act-btn"><i class="fas fa-calendar-plus"></i> Nueva Actividad</button>
+            </div>
+            <div class="card">
+                <table class="table">
+                    <thead><tr><th>Año</th><th>Fecha</th><th>Título</th><th>Acciones</th></tr></thead>
+                    <tbody id="act-tbody"></tbody>
                 </table>
             </div>
         </section>
@@ -256,6 +270,32 @@
         </div>
     </div>
 
+    <!-- MODAL ACTIVIDADES -->
+    <div class="modal" id="act-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="act-m-title">Organizar Actividad</h2>
+            <form id="act-form" style="margin-top: 1.5rem;">
+                <input type="hidden" id="ac-id">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group"><label>Año</label><input type="number" id="ac-year" required value="2025"></div>
+                    <div class="form-group"><label>Fecha (Texto)</label><input type="text" id="ac-date" placeholder="Ej: 15 May, 2024"></div>
+                </div>
+                <div class="form-group"><label>Título de la Actividad</label><input type="text" id="ac-title" required></div>
+                <div class="form-group"><label>Descripción</label><textarea id="ac-desc" rows="3"></textarea></div>
+                <div class="form-group">
+                    <label>Imagen del Evento</label>
+                    <input type="file" id="ac-file" accept="image/*" onchange="previewImage(this, 'ac-preview-img')">
+                    <div id="ac-preview-container" style="margin-top: 10px; text-align: center;">
+                        <img id="ac-preview-img" src="" style="max-width: 100%; max-height: 120px; border-radius: 8px; display: none; border: 1px solid var(--border);">
+                    </div>
+                    <input type="hidden" id="ac-img">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="act-submit-btn">Guardar Actividad</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         const token = localStorage.getItem('magnificos_token');
         if (!token) window.location.href = 'index.html';
@@ -303,6 +343,7 @@
 
         let currentBlogs = [];
         let currentGallery = [];
+        let currentActivities = [];
 
         // NAVEGACIÓN
         document.querySelectorAll('.sidebar-nav a[data-target]').forEach(link => {
@@ -316,6 +357,7 @@
                 
                 if(target === 'blogs-manage') refreshBlogs();
                 if(target === 'gallery-manage') refreshGallery();
+                if(target === 'activities-manage') refreshActivities();
                 if(target === 'podcasts-manage') refreshPods();
                 if(target === 'dash-overview') refreshStats();
             };
@@ -327,8 +369,11 @@
                 const b = await rb.json();
                 const rg = await fetch(`${api}/gallery`);
                 const g = await rg.json();
+                const ra = await fetch(`${api}/activities`);
+                const a = await ra.json();
                 document.getElementById('st-blogs').innerText = b.length;
                 document.getElementById('st-gal').innerText = g.length;
+                document.getElementById('st-act').innerText = a.length;
             } catch (e) {}
         }
 
@@ -387,7 +432,6 @@
                 let imageUrl = document.getElementById('b-img').value;
                 const fileInput = document.getElementById('b-file');
                 
-                // Si el usuario seleccionó un archivo nuevo, subirlo primero
                 if (fileInput.files.length > 0) {
                     imageUrl = await uploadImage(fileInput.files[0]);
                 }
@@ -439,13 +483,10 @@
                 document.getElementById('g-year').value = photo.year;
                 document.getElementById('g-title').value = photo.title;
                 document.getElementById('g-img').value = photo.image;
-                
-                // Mostrar preview de la imagen actual
                 const preview = document.getElementById('g-preview-img');
                 preview.src = photo.image;
                 preview.style.display = 'inline-block';
-                
-                document.getElementById('gal-m-title').innerText = "Editar Foto / Actividad";
+                document.getElementById('gal-m-title').innerText = "Editar Foto";
                 document.getElementById('gal-submit-btn').innerText = "Guardar Cambios";
                 document.getElementById('gal-modal').classList.add('active');
             }
@@ -472,23 +513,16 @@
                 const fileInput = document.getElementById('g-file');
                 const id = document.getElementById('g-id').value;
 
-                // Si no hay ID (nueva foto) y no hay archivo, error
                 if (!id && fileInput.files.length === 0) throw new Error('Selecciona una imagen');
-
-                // Si se ha seleccionado un archivo nuevo, subirlo
-                if (fileInput.files.length > 0) {
-                    imageUrl = await uploadImage(fileInput.files[0]);
-                }
+                if (fileInput.files.length > 0) imageUrl = await uploadImage(fileInput.files[0]);
 
                 const data = {
                     year: document.getElementById('g-year').value,
                     title: document.getElementById('g-title').value,
                     image: imageUrl
                 };
-                
                 const method = id ? 'PUT' : 'POST';
                 const url = id ? `${api}/gallery/${id}` : `${api}/gallery`;
-
                 await fetch(url, { method, headers, body: JSON.stringify(data) });
                 document.getElementById('gal-modal').classList.remove('active');
                 refreshGallery();
@@ -504,6 +538,93 @@
             if(confirm('¿Eliminar esta foto del archivo?')) {
                 await fetch(`${api}/gallery/${id}`, { method: 'DELETE', headers });
                 refreshGallery();
+            }
+        };
+
+        // ACTIVITIES MANAGEMENT
+        async function refreshActivities() {
+            try {
+                const res = await fetch(`${api}/activities`);
+                currentActivities = await res.json();
+                const tbody = document.getElementById('act-tbody');
+                tbody.innerHTML = currentActivities.map(a => `
+                    <tr>
+                        <td><strong>${a.year}</strong></td>
+                        <td>${a.date}</td>
+                        <td>${a.title}</td>
+                        <td>
+                            <button class="icon-btn" onclick="editActivity(${a.id})"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="icon-btn delete" onclick="deleteActivity(${a.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {}
+        }
+
+        document.getElementById('add-act-btn').onclick = () => {
+            document.getElementById('act-form').reset();
+            document.getElementById('ac-id').value = '';
+            document.getElementById('ac-preview-img').style.display = 'none';
+            document.getElementById('act-m-title').innerText = "Nueva Actividad";
+            document.getElementById('act-modal').classList.add('active');
+        };
+
+        window.editActivity = (id) => {
+            const act = currentActivities.find(a => a.id === id);
+            if(act) {
+                document.getElementById('ac-id').value = act.id;
+                document.getElementById('ac-year').value = act.year;
+                document.getElementById('ac-date').value = act.date;
+                document.getElementById('ac-title').value = act.title;
+                document.getElementById('ac-desc').value = act.description;
+                document.getElementById('ac-img').value = act.image;
+                const preview = document.getElementById('ac-preview-img');
+                preview.src = act.image;
+                preview.style.display = 'inline-block';
+                document.getElementById('act-m-title').innerText = "Editar Actividad";
+                document.getElementById('act-modal').classList.add('active');
+            }
+        };
+
+        document.getElementById('act-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('act-submit-btn');
+            submitBtn.innerText = "Guardando...";
+            submitBtn.disabled = true;
+
+            try {
+                let imageUrl = document.getElementById('ac-img').value;
+                const fileInput = document.getElementById('ac-file');
+                const id = document.getElementById('ac-id').value;
+
+                if (!id && fileInput.files.length === 0) throw new Error('Selecciona una imagen');
+                if (fileInput.files.length > 0) imageUrl = await uploadImage(fileInput.files[0]);
+
+                const data = {
+                    year: document.getElementById('ac-year').value,
+                    date: document.getElementById('ac-date').value,
+                    title: document.getElementById('ac-title').value,
+                    description: document.getElementById('ac-desc').value,
+                    image: imageUrl
+                };
+
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${api}/activities/${id}` : `${api}/activities`;
+                await fetch(url, { method, headers, body: JSON.stringify(data) });
+                document.getElementById('act-modal').classList.remove('active');
+                refreshActivities();
+            } catch (err) {
+                alert('Error: ' + err.message);
+            } finally {
+                submitBtn.innerText = "Guardar Actividad";
+                submitBtn.disabled = false;
+            }
+        };
+
+        window.deleteActivity = async (id) => {
+            if(confirm('¿Eliminar esta actividad?')) {
+                await fetch(`${api}/activities/${id}`, { method: 'DELETE', headers });
+                refreshActivities();
             }
         };
 

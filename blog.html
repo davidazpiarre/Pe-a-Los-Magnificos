@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog y Noticias | Peña Los Magníficos</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #00459c;
+            --accent-gold: #c5a059;
+            --bg-soft: #f8fafc;
+        }
+
+        body { 
+            background-color: var(--bg-soft); 
+            font-family: 'Inter', sans-serif; 
+        }
+
+        .blog-hero {
+            height: 400px;
+            background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&q=80&w=1920');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-content h1 { 
+            font-size: 4rem; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            margin-bottom: 10px; 
+            color: white;
+            letter-spacing: -2px;
+        }
+
+        .blog-container { 
+            max-width: 1200px; 
+            margin: 0 auto 100px; 
+            padding: 0 20px; 
+        }
+
+        .blog-full-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .blog-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 45, 102, 0.1);
+        }
+
+        .blog-img {
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .blog-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .blog-card:hover .blog-img img {
+            transform: scale(1.1);
+        }
+
+        .blog-info {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-date {
+            font-size: 0.85rem;
+            color: var(--primary-blue);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .blog-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #1a1a1a;
+            line-height: 1.3;
+        }
+
+        .blog-info p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .blog-footer {
+            margin-top: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-read-more {
+            color: var(--primary-blue);
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.3s ease;
+        }
+
+        .btn-read-more:hover {
+            gap: 12px;
+        }
+
+        .empty-blogs {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 100px 0;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 { font-size: 2.5rem; }
+            .blog-full-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Live Event Ticker -->
+    <div class="live-event-ticker">
+        <div class="ticker-content">
+            <span class="ticker-badge">PRÓXIMO EVENTO</span>
+            <span class="ticker-text" id="event-countdown">Cargando evento...</span>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header" id="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="header-logo">
+                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <div class="header-logo-text">
+                    PEÑA <span>MAGNÍFICOS</span>
+                </div>
+            </a>
+
+            <nav class="header-nav">
+                <ul class="header-nav-list">
+                    <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="index.html#trayectoria" class="nav-link">Trayectoria</a></li>
+                    <li><a href="actividades.html" class="nav-link">Actividades</a></li>
+                    <li><a href="galeria.html" class="nav-link">Galería</a></li>
+                    <li><a href="blog.html" class="nav-link active">Blog</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="burger-menu" id="burger-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="main-sidebar" id="main-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </div>
+            <a href="index.html" class="sidebar-logo">
+                <div class="logo-text" style="text-align: right;">
+                    PEÑA <span style="display: block; text-align: right;">LOS MAGNÍFICOS</span>
+                </div>
+                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li><a href="index.html#inicio" class="nav-item"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="index.html#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a></li>
+                <li><a href="actividades.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Actividades</a></li>
+                <li><a href="galeria.html" class="nav-item"><i class="fas fa-images"></i> Galería</a></li>
+                <li><a href="blog.html" class="nav-item active"><i class="fas fa-newspaper"></i> Blog y Noticias</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <section class="blog-hero">
+        <div class="hero-content">
+            <h1>Blog y Noticias</h1>
+            <p style="font-size: 1.2rem; opacity: 0.9; font-weight: 300;">Mantente al día con todas las novedades de la Peña</p>
+        </div>
+    </section>
+
+    <div class="blog-container">
+        <main class="blog-full-grid" id="full-blog-grid">
+            <!-- Cargando noticias... -->
+        </main>
+    </div>
+
+    <!-- Blog Reader Modal -->
+    <div class="blog-reader-modal" id="blog-modal">
+        <div class="blog-reader-content" data-lenis-prevent>
+            <span class="blog-modal-close" id="blog-modal-close">&times;</span>
+            <div class="blog-reader-header">
+                <img src="" alt="" id="modal-blog-img">
+            </div>
+            <div class="blog-reader-body">
+                <span class="blog-date" id="modal-blog-date">Fecha</span>
+                <h2 id="modal-blog-title">Título del Blog</h2>
+                <div class="blog-text-content" id="modal-blog-text">
+                    <!-- Contenido -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Blog Modal Styles */
+        .blog-reader-modal {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .blog-reader-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .blog-reader-content {
+            background: white;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            border-radius: 24px;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(30px);
+            transition: transform 0.4s ease;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        .blog-reader-modal.active .blog-reader-content {
+            transform: translateY(0);
+        }
+
+        .blog-reader-header {
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+        }
+
+        .blog-reader-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-reader-body {
+            padding: 3rem;
+        }
+
+        .blog-text-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #475569;
+        }
+
+        .blog-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+
+        .blog-modal-close:hover {
+            background: var(--primary-blue);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .blog-reader-body { padding: 1.5rem; }
+            .blog-reader-header { height: 200px; }
+        }
+    </style>
+
+    <a href="index.html" class="btn-back-float"><i class="fas fa-home"></i></a>
+
+    <footer style="background: #0f172a; color: white; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <img src="imagenes/logo-magnificos.jpg" alt="" style="width: 60px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--primary-blue);">
+            <h2 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">PEÑA LOS MAGNÍFICOS</h2>
+            <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2026 Zaragoza. Tradición y Amistad.</p>
+        </div>
+    </footer>
+
+    <script>
+        const loadAllBlogs = async () => {
+            console.log("Iniciando carga de blogs...");
+            const grid = document.getElementById('full-blog-grid');
+            try {
+                const response = await fetch('http://localhost:3000/api/blogs');
+                const blogs = await response.json();
+                console.log("Blogs recibidos:", blogs);
+                
+                if (blogs.length === 0) {
+                    grid.innerHTML = '<div class="empty-blogs"><h2>No hay noticias publicadas todavía.</h2></div>';
+                    return;
+                }
+
+                grid.innerHTML = blogs.map((blog, index) => `
+                    <article class="blog-card reveal" onclick="openBlogModal(${index})">
+                        <div class="blog-img">
+                            <img src="${blog.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600'}" alt="${blog.title}">
+                        </div>
+                        <div class="blog-info">
+                            <span class="blog-date">${blog.date}</span>
+                            <h3>${blog.title}</h3>
+                            <p>${blog.content.substring(0, 150)}${blog.content.length > 150 ? '...' : ''}</p>
+                            <div class="blog-footer">
+                                <span class="btn-read-more" style="cursor: pointer;">Leer más <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </article>
+                `).join('');
+
+                window.allBlogs = blogs; // Guardamos para el modal
+
+                // Forzamos la visibilidad si el observer tarda o no está
+                setTimeout(() => {
+                    const revealEls = document.querySelectorAll('.reveal');
+                    if (window.revealObserver) {
+                        revealEls.forEach(el => window.revealObserver.observe(el));
+                    } else {
+                        revealEls.forEach(el => el.classList.add('active'));
+                    }
+                }, 200);
+
+            } catch (err) {
+                console.error("Error crítico cargando blogs:", err);
+                grid.innerHTML = '<div class="empty-blogs"><h2>Error al conectar con el servidor. Revisa la consola para más detalles.</h2></div>';
+            }
+        };
+
+        const openBlogModal = (index) => {
+            const blog = window.allBlogs[index];
+            if(!blog) return;
+
+            document.getElementById('modal-blog-img').src = blog.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600';
+            document.getElementById('modal-blog-date').innerText = blog.date;
+            document.getElementById('modal-blog-title').innerText = blog.title;
+            document.getElementById('modal-blog-text').innerHTML = blog.content.split('\n').map(p => `<p style="margin-bottom: 1.5rem;">${p}</p>`).join('');
+            
+            document.getElementById('blog-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Detener el scroll suave de Lenis para que no mueva el fondo
+            if (window.lenis) window.lenis.stop();
+        };
+
+        const closeBlogModal = () => {
+            document.getElementById('blog-modal').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Reanudar el scroll suave de Lenis
+            if (window.lenis) window.lenis.start();
+        };
+
+        document.getElementById('blog-modal-close').onclick = closeBlogModal;
+        document.getElementById('blog-modal').onclick = (e) => {
+            if(e.target.id === 'blog-modal') closeBlogModal();
+        };
+
+        // Escuchar tecla ESC
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Escape') closeBlogModal();
+        });
+
+        window.addEventListener('load', loadAllBlogs);
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

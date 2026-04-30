@@ -20,7 +20,7 @@
             height: 400px;
             background: linear-gradient(rgba(0, 69, 156, 0.8), rgba(0, 45, 102, 0.9)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1920');
             background-size: cover;
-            background-position: center;
+            background-position: center top;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -96,18 +96,186 @@
             .activity-row { flex-direction: column; }
             .activity-image { width: 100%; height: 200px; }
         }
+
+        /* --- Lightbox Styles --- */
+        .lightbox {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 85%;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border-radius: 8px;
+        }
+
+        .lightbox.active .lightbox-content {
+            transform: scale(1);
+        }
+
+        .lightbox-img {
+            display: block;
+            width: 100%;
+            height: auto;
+            max-height: 85vh;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+
+        .lightbox-caption {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+        }
+
+        .lightbox-caption h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            z-index: 10001;
+            transition: 0.3s;
+        }
+
+        .lightbox-close:hover {
+            transform: rotate(90deg) scale(1.2);
+            color: #c5a059;
+        }
+
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            z-index: 10002;
+        }
+
+        .lightbox-nav:hover {
+            background: #c5a059;
+            color: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .lightbox-prev { left: 40px; }
+        .lightbox-next { right: 40px; }
+
+        @media (max-width: 768px) {
+            .lightbox-prev { left: 10px; }
+            .lightbox-next { right: 10px; }
+            .lightbox-nav { width: 40px; height: 40px; }
+        }
     </style>
 </head>
 <body>
-    <header id="main-header">
-        <nav class="container nav-container">
-            <a href="index.html" class="logo"><img src="imagenes/logo-magnificos.jpg" alt="Logo" class="logo-img"> PEÑA&nbsp;<span>ARCHIVOS</span></a>
-            <ul class="nav-links">
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="galeria.html">Galería</a></li>
+    <!-- Live Event Ticker -->
+    <div class="live-event-ticker">
+        <div class="ticker-content">
+            <span class="ticker-badge">PRÓXIMO EVENTO</span>
+            <span class="ticker-text" id="event-countdown">Cargando evento...</span>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header" id="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="header-logo">
+                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <div class="header-logo-text">
+                    PEÑA <span>MAGNÍFICOS</span>
+                </div>
+            </a>
+
+            <nav class="header-nav">
+                <ul class="header-nav-list">
+                    <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="index.html#trayectoria" class="nav-link">Trayectoria</a></li>
+                    <li><a href="actividades.html" class="nav-link active">Actividades</a></li>
+                    <li><a href="galeria.html" class="nav-link">Galería</a></li>
+                    <li><a href="blog.html" class="nav-link">Blog</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div class="burger-menu" id="burger-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Sidebar Navigation -->
+    <aside class="main-sidebar" id="main-sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-close" id="sidebar-close">
+                <i class="fas fa-times"></i>
+            </div>
+            <a href="index.html" class="sidebar-logo">
+                <div class="logo-text" style="text-align: right;">
+                    PEÑA <span style="display: block; text-align: right;">LOS MAGNÍFICOS</span>
+                </div>
+                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul class="nav-list">
+                <li><a href="index.html#inicio" class="nav-item"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="index.html#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a></li>
+                <li><a href="actividades.html" class="nav-item active"><i class="fas fa-calendar-alt"></i> Actividades</a></li>
+                <li><a href="galeria.html" class="nav-item"><i class="fas fa-images"></i> Galería</a></li>
+                <li><a href="blog.html" class="nav-item"><i class="fas fa-newspaper"></i> Blog y Noticias</a></li>
             </ul>
         </nav>
-    </header>
+
+        <div class="sidebar-footer">
+            <!-- Acceso admin solo en index.html -->
+        </div>
+    </aside>
 
     <section class="activities-hero">
         <div class="hero-content">
@@ -128,51 +296,137 @@
         <p>&copy; 2026 Peña Los Magníficos</p>
     </footer>
 
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close" id="lightbox-close">&times;</span>
+        <button class="lightbox-nav lightbox-prev" id="lb-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="lightbox-nav lightbox-next" id="lb-next"><i class="fas fa-chevron-right"></i></button>
+        <div class="lightbox-content">
+            <img src="" alt="" class="lightbox-img" id="lightbox-img">
+            <div class="lightbox-caption">
+                <h3 id="lightbox-title">Título</h3>
+                <p id="lightbox-date">Fecha</p>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let currentActivitiesList = [];
+        let currentActivityIndex = 0;
         const years = [2025, 2024, 2023, 2022, 2021, 2020];
         
         const loadActivities = async () => {
+            const list = document.getElementById('activities-list');
             const urlParams = new URLSearchParams(window.location.search);
             const currentYear = urlParams.get('year') || '2025';
             
-            document.getElementById('year-title').innerText = `Actividades ${currentYear}`;
+            if (document.getElementById('year-title')) {
+                document.getElementById('year-title').innerText = `Actividades ${currentYear}`;
+            }
             
             // Generar selector de años
             const selector = document.getElementById('year-selector');
-            selector.innerHTML = years.map(y => `
-                <a href="?year=${y}" class="year-link ${y == currentYear ? 'active' : ''}">${y}</a>
-            `).join('');
-
-            const list = document.getElementById('activities-list');
+            if (selector) {
+                selector.innerHTML = years.map(y => `
+                    <a href="?year=${y}" class="year-link ${y == currentYear ? 'active' : ''}">${y}</a>
+                `).join('');
+            }
             
             try {
-                const response = await fetch(`http://localhost:3000/api/gallery?year=${currentYear}`);
-                const data = await response.json();
+                const response = await fetch(`http://localhost:3000/api/activities?year=${currentYear}`);
+                currentActivitiesList = await response.json();
                 
-                if (data.length === 0) {
+                if (currentActivitiesList.length === 0) {
                     list.innerHTML = `<div style="text-align:center; padding: 100px; opacity:0.5;"><h2>No hay actividades registradas en ${currentYear}</h2></div>`;
                     return;
                 }
 
-                list.innerHTML = data.map(act => `
+                list.innerHTML = currentActivitiesList.map((act, index) => `
                     <div class="activity-row">
                         <div class="activity-image">
-                            <img src="${act.image}" alt="${act.title}">
+                            <img src="${act.image}" alt="${act.title}" data-index="${index}">
                         </div>
                         <div class="activity-details">
                             <span class="date">${act.date}</span>
                             <h3>${act.title || 'Evento de la Peña'}</h3>
-                            <p>Descripción del evento realizado por la peña en el año ${currentYear}. Un momento de convivencia y alegría entre todos los socios, celebrando nuestras tradiciones en Zaragoza.</p>
+                            <p>${act.description || `Descripción del evento realizado por la peña en el año ${currentYear}. Un momento de convivencia y alegría entre todos los socios, celebrando nuestras tradiciones en Zaragoza.`}</p>
                             <a href="galeria.html?year=${currentYear}" class="btn-gallery-link">Ver fotos en Galería</a>
                         </div>
                     </div>
                 `).join('');
+
+                // Añadir eventos a las imágenes para el Lightbox
+                setTimeout(() => {
+                    document.querySelectorAll('.activity-image img').forEach(img => {
+                        img.style.cursor = 'zoom-in';
+                        img.onclick = () => {
+                            currentActivityIndex = parseInt(img.getAttribute('data-index'));
+                            updateLightbox();
+                            document.getElementById('lightbox').classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                            if (window.lenis) window.lenis.stop();
+                        };
+                    });
+                }, 100);
+
             } catch (e) {
-                list.innerHTML = `<div style="text-align:center; padding: 100px; color:red;"><h2>Error al cargar actividades</h2></div>`;
+                if (list) list.innerHTML = `<div style="text-align:center; padding: 100px; color:red;"><h2>Error al cargar actividades</h2></div>`;
             }
         };
 
+        const updateLightbox = () => {
+            const act = currentActivitiesList[currentActivityIndex];
+            if(!act) return;
+
+            const lbImg = document.getElementById('lightbox-img');
+            lbImg.style.opacity = '0';
+            
+            setTimeout(() => {
+                lbImg.src = act.image;
+                document.getElementById('lightbox-title').innerText = act.title || 'Evento';
+                document.getElementById('lightbox-date').innerText = act.date;
+                lbImg.style.opacity = '1';
+            }, 150);
+        };
+
+        const nextActivity = (e) => {
+            if(e) e.stopPropagation();
+            currentActivityIndex = (currentActivityIndex + 1) % currentActivitiesList.length;
+            updateLightbox();
+        };
+
+        const prevActivity = (e) => {
+            if(e) e.stopPropagation();
+            currentActivityIndex = (currentActivityIndex - 1 + currentActivitiesList.length) % currentActivitiesList.length;
+            updateLightbox();
+        };
+
+        const closeLightbox = () => {
+            document.getElementById('lightbox').classList.remove('active');
+            document.body.style.overflow = '';
+            if (window.lenis) window.lenis.start();
+        };
+
+        document.getElementById('lb-next').onclick = nextActivity;
+        document.getElementById('lb-prev').onclick = prevActivity;
+        document.getElementById('lightbox-close').onclick = closeLightbox;
+        document.getElementById('lightbox').onclick = (e) => {
+            if(e.target.id === 'lightbox') closeLightbox();
+        };
+
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (!document.getElementById('lightbox').classList.contains('active')) return;
+            if (e.key === 'ArrowRight') nextActivity();
+            if (e.key === 'ArrowLeft') prevActivity();
+            if (e.key === 'Escape') closeLightbox();
+        });
+
         window.onload = loadActivities;
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

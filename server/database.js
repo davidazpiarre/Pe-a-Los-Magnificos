@@ -49,6 +49,15 @@ async function setupDatabase() {
             bounce INTEGER DEFAULT 0,
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         );
+
+        CREATE TABLE IF NOT EXISTS activities (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT,
+            description TEXT,
+            date TEXT,
+            image TEXT,
+            year TEXT
+        );
     `);
 
     // Inicializar configuración por defecto si no existe

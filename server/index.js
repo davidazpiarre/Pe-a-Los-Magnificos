@@ -265,11 +265,83 @@ app.post('/api/gallery', authenticateToken, isAdmin, async (req, res) => {
     }
 });
 
+// Editar foto (Solo Admin)
+app.put('/api/gallery/:id', authenticateToken, isAdmin, async (req, res) => {
+    const { id } = req.params;
+    const { year, title, image } = req.body;
+    try {
+        await db.run('UPDATE gallery SET year=?, title=?, image=? WHERE id=?', [year, title, image, id]);
+        res.json({ message: 'Imagen actualizada' });
+    } catch (error) {
+        console.error('Error al editar galería:', error);
+        res.status(500).json({ message: 'Error al actualizar galería' });
+    }
+});
+
 // Eliminar foto (Solo Admin)
 app.delete('/api/gallery/:id', authenticateToken, isAdmin, async (req, res) => {
     try {
         await db.run('DELETE FROM gallery WHERE id = ?', [req.params.id]);
         res.json({ message: 'Imagen eliminada' });
+    } catch (error) {
+        console.error('Error al eliminar de galería:', error);
+        res.status(500).json({ message: 'Error al borrar' });
+    }
+});
+
+// --- ACTIVIDADES API ---
+
+// Obtener actividades (Público)
+app.get('/api/activities', async (req, res) => {
+    const { year } = req.query;
+    try {
+        let query = 'SELECT * FROM activities';
+        let params = [];
+        if (year) {
+            query += ' WHERE year = ?';
+            params.push(year);
+        }
+        query += ' ORDER BY id DESC';
+        const items = await db.all(query, params);
+        res.json(items);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al leer actividades' });
+    }
+});
+
+// Añadir actividad (Solo Admin)
+app.post('/api/activities', authenticateToken, isAdmin, async (req, res) => {
+    const { year, title, description, image, date } = req.body;
+    if (!year || !title || !image) return res.status(400).json({ message: 'Año, título e imagen obligatorios' });
+
+    try {
+        const finalDate = date || new Date().toLocaleDateString('es-ES');
+        await db.run('INSERT INTO activities (year, title, description, image, date) VALUES (?, ?, ?, ?, ?)', 
+            [year, title, description || '', image, finalDate]);
+        res.status(201).json({ message: 'Actividad añadida' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al guardar actividad' });
+    }
+});
+
+// Editar actividad (Solo Admin)
+app.put('/api/activities/:id', authenticateToken, isAdmin, async (req, res) => {
+    const { id } = req.params;
+    const { year, title, description, image, date } = req.body;
+    try {
+        await db.run('UPDATE activities SET year=?, title=?, description=?, image=?, date=? WHERE id=?', 
+            [year, title, description, image, date, id]);
+        res.json({ message: 'Actividad actualizada' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar actividad' });
+    }
+});
+
+// Eliminar actividad (Solo Admin)
+app.delete('/api/activities/:id', authenticateToken, isAdmin, async (req, res) => {
+    try {
+        await db.run('DELETE FROM activities WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Actividad eliminada' });
     } catch (error) {
         res.status(500).json({ message: 'Error al borrar' });
     }
@@ -330,10 +402,19 @@ app.use((err, req, res, next) => {
 });
 
 // Inicializar DB y arrancar servidor
-setupDatabase().then(database => {
-    db = database;
-    app.listen(PORT, () => {
-        console.log(`Servidor de la Peña corriendo en http://localhost:${PORT}`);
-        console.log('Base de datos inicializada y lista.');
+setupDatabase()
+    .then(database => {
+        db = database;
+        app.listen(PORT, () => {
+            console.log('------------------------------------------------');
+            console.log(`🚀 SERVIDOR CORRIENDO: http://localhost:${PORT}`);
+            console.log('📂 CARPETA UPLOADS LISTA');
+            console.log('🗄️ BASE DE DATOS INICIALIZADA');
+            console.log('------------------------------------------------');
+        });
+    })
+    .catch(err => {
+        console.error('❌ ERROR CRÍTICO AL INICIAR LA BASE DE DATOS:');
+        console.error(err);
+        process.exit(1);
     });
-});

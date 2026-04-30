@@ -18,10 +18,10 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-    
+
     <!-- Smooth Scroll (Lenis) -->
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    
+
     <!-- GSAP & ScrollTrigger -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -37,10 +37,37 @@
         </div>
     </div>
 
-    <!-- Desktop Toggle Icon (Top Right) -->
-    <div class="desktop-nav-toggle" id="desktop-nav-toggle">
-        <i class="fas fa-bars"></i>
-    </div>
+    <!-- Main Header -->
+    <header class="main-header" id="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="header-logo">
+                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <div class="header-logo-text">
+                    PEÑA <span>MAGNÍFICOS</span>
+                </div>
+            </a>
+
+            <nav class="header-nav">
+                <ul class="header-nav-list">
+                    <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                    <li><a href="#trayectoria" class="nav-link">Trayectoria</a></li>
+                    <li><a href="actividades.html" class="nav-link">Actividades</a></li>
+                    <li><a href="galeria.html" class="nav-link">Galería</a></li>
+                    <li><a href="blog.html" class="nav-link">Blog</a></li>
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <div id="auth-container-header">
+                    <a href="#" id="login-trigger-header" class="btn-auth-header"><i class="fas fa-user-shield"></i>
+                        <span>Administrador</span></a>
+                </div>
+                <div class="burger-menu" id="burger-menu">
+                    <i class="fas fa-bars"></i>
+                </div>
+            </div>
+        </div>
+    </header>
 
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
@@ -63,8 +90,7 @@
             <ul class="nav-list">
                 <li><a href="#inicio" class="nav-item active"><i class="fas fa-home"></i> Inicio</a></li>
                 <li><a href="#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a></li>
-                <li><a href="#nosotros" class="nav-item"><i class="fas fa-users"></i> Nosotros</a></li>
-                
+
                 <li class="nav-dropdown-parent">
                     <a href="javascript:void(0)" class="nav-item dropdown-trigger">
                         <i class="fas fa-calendar-alt"></i> Actividades <i class="fas fa-chevron-down arrow"></i>
@@ -87,13 +113,13 @@
                     </ul>
                 </li>
 
-                <li><a href="#blog" class="nav-item"><i class="fas fa-newspaper"></i> Blog y Noticias</a></li>
+                <li><a href="blog.html" class="nav-item"><i class="fas fa-newspaper"></i> Blog y Noticias</a></li>
             </ul>
         </nav>
 
         <div class="sidebar-footer">
             <div id="auth-container-sidebar">
-                <a href="#" id="login-trigger" class="btn-auth-sidebar"><i class="fas fa-sign-in-alt"></i> Acceso Socio</a>
+                <a href="#" id="login-trigger" class="btn-auth-sidebar"><i class="fas fa-lock"></i> Acceso Admin</a>
             </div>
             <div class="sidebar-social">
                 <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -103,19 +129,20 @@
         </div>
     </aside>
 
-    <!-- Header for Mobile only -->
-    <header id="mobile-header">
-        <a href="#" class="logo-mob"><img src="imagenes/logo-magnificos.jpg" alt="Logo"> PEÑA <span>MAGNÍFICOS</span></a>
-        <div class="burger-mob" id="burger-mob">
-            <i class="fas fa-bars"></i>
-        </div>
-    </header>
+
 
     <!-- Hero Section -->
     <section class="hero" id="inicio">
         <div class="hero-content container">
-            <h1 class="reveal-zoom"><img src="imagenes/logo-magnificos.jpg" alt="Logo" class="hero-logo"> Peña Los Magníficos</h1>
-            <p class="reveal reveal-delay-1">Pasión, tradición y amistad en el corazón de Zaragoza</p>
+            <div class="hero-flex-layout">
+                <div class="hero-brand reveal-zoom">
+                    <img src="imagenes/logo-magnificos.jpg" alt="Logo" class="hero-logo-new">
+                </div>
+                <div class="hero-text-content">
+                    <h1 class="reveal">Peña Los Magníficos</h1>
+                    <p class="reveal reveal-delay-1">Pasión, tradición y amistad en el corazón de Zaragoza</p>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -125,9 +152,10 @@
             <h2 class="reveal">Podcast patrocinados</h2>
             <div class="podcasts-grid">
                 <!-- Podcast 1 -->
-                <a href="#" id="home-podcast-link-1" class="podcast-card reveal" target="_blank">
+                <a href="javascript:void(0)" id="home-podcast-link-1" class="podcast-card reveal" target="_blank">
                     <div class="podcast-img-container">
-                        <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&q=80&w=800" alt="Podcast 1" id="home-podcast-img-1">
+                        <img src="https://images.unsplash.com/photo-1478737270239-2f02b77fc618?auto=format&fit=crop&q=80&w=800"
+                            alt="Podcast 1" id="home-podcast-img-1">
                         <div class="podcast-badge">Patrocinado</div>
                     </div>
                     <div class="podcast-body">
@@ -138,9 +166,11 @@
                 </a>
 
                 <!-- Podcast 2 -->
-                <a href="#" id="home-podcast-link-2" class="podcast-card reveal reveal-delay-1" target="_blank">
+                <a href="javascript:void(0)" id="home-podcast-link-2" class="podcast-card reveal reveal-delay-1"
+                    target="_blank">
                     <div class="podcast-img-container">
-                        <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800" alt="Podcast 2" id="home-podcast-img-2">
+                        <img src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&q=80&w=800"
+                            alt="Podcast 2" id="home-podcast-img-2">
                         <div class="podcast-badge">Patrocinado</div>
                     </div>
                     <div class="podcast-body">
@@ -160,47 +190,51 @@
                 <h2 style="margin-bottom: 0.5rem;">Nuestra Trayectoria</h2>
                 <p style="color: #666; font-size: 1.1rem;">Más de tres décadas de pasión, amistad y tradición.</p>
             </div>
-            
+
             <div class="timeline">
                 <div class="timeline-line" id="timeline-line"></div>
-                
+
                 <!-- Event 1 (1990) -->
                 <div class="timeline-item reveal-left">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-year">1990</div>
                         <h3>Fundación</h3>
-                        <p>Nace la Peña Los Magníficos con un grupo de amigos apasionados por las tradiciones y la cultura de nuestra tierra.</p>
+                        <p>Nace la Peña Los Magníficos con un grupo de amigos apasionados por las tradiciones y la
+                            cultura de nuestra tierra.</p>
                     </div>
                 </div>
-                
+
                 <!-- Event 2 (2005) -->
                 <div class="timeline-item reveal-right">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-year">2005</div>
                         <h3>Primer Gran Local</h3>
-                        <p>Inauguramos nuestra sede central propia, convirtiéndonos en un punto de encuentro clave en el corazón de Zaragoza.</p>
+                        <p>Inauguramos nuestra sede central propia, convirtiéndonos en un punto de encuentro clave en el
+                            corazón de Zaragoza.</p>
                     </div>
                 </div>
-                
+
                 <!-- Event 3 (2015) -->
                 <div class="timeline-item reveal-left">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-year">2015</div>
                         <h3>25 Aniversario</h3>
-                        <p>Celebramos nuestro cuarto de siglo con una gala inolvidable, reforzando los lazos que nos unen como gran familia.</p>
+                        <p>Celebramos nuestro cuarto de siglo con una gala inolvidable, reforzando los lazos que nos
+                            unen como gran familia.</p>
                     </div>
                 </div>
-                
+
                 <!-- Event 4 (2025) -->
                 <div class="timeline-item reveal-right">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <div class="timeline-year">2025</div>
                         <h3>Era Digital</h3>
-                        <p>Apostamos por la modernización y la conexión digital, asegurando que el legado de los Magníficos llegue a las nuevas generaciones.</p>
+                        <p>Apostamos por la modernización y la conexión digital, asegurando que el legado de los
+                            Magníficos llegue a las nuevas generaciones.</p>
                     </div>
                 </div>
             </div>
@@ -234,43 +268,12 @@
     <section class="actividades section-padding" id="actividades">
         <div class="container">
             <h2 class="reveal" style="margin-bottom: 3rem;">Nuestras Actividades</h2>
-            <div class="activities-grid">
-                <!-- Activity 1 -->
-                <div class="activity-item reveal">
-                    <div class="activity-img">
-                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=600"
-                            alt="Evento 1">
-                    </div>
-                    <div class="activity-info">
-                        <span class="activity-date">15 May, 2024</span>
-                        <h3>Comida de Hermandad</h3>
-                        <p>Nuestra tradicional comida anual donde celebramos la amistad y el buen comer.</p>
-                    </div>
-                </div>
-                <!-- Activity 2 -->
-                <div class="activity-item reveal reveal-delay-1">
-                    <div class="activity-img">
-                        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&q=80&w=600"
-                            alt="Evento 2">
-                    </div>
-                    <div class="activity-info">
-                        <span class="activity-date">22 Jun, 2024</span>
-                        <h3>Torneo de Mus</h3>
-                        <p>Competencia sana y divertida para todos los niveles en nuestra sede.</p>
-                    </div>
-                </div>
-                <!-- Activity 3 -->
-                <div class="activity-item reveal reveal-delay-2">
-                    <div class="activity-img">
-                        <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=600"
-                            alt="Evento 3">
-                    </div>
-                    <div class="activity-info">
-                        <span class="activity-date">12 Oct, 2024</span>
-                        <h3>Fiestas del Pilar</h3>
-                        <p>Nuestra participación especial en los actos centrales de las fiestas.</p>
-                    </div>
-                </div>
+            <div class="activities-grid" id="home-activities-grid">
+                <!-- Se cargarán dinámicamente desde la base de datos -->
+                <p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Cargando actividades...</p>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="actividades.html" class="btn-listen" style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver calendario completo <i class="fas fa-calendar-alt"></i></a>
             </div>
         </div>
     </section>
@@ -279,31 +282,12 @@
     <section class="galeria section-padding" id="galeria">
         <div class="container">
             <h2 class="reveal" style="margin-bottom: 3rem;">Galería de Fotos</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item reveal-zoom">
-                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=800" alt="Galería 1">
-                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
-                </div>
-                <div class="gallery-item reveal-zoom reveal-delay-1">
-                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=800" alt="Galería 2">
-                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
-                </div>
-                <div class="gallery-item reveal-zoom reveal-delay-2">
-                    <img src="https://images.unsplash.com/photo-1528605248644-14dd04cb11c7?auto=format&fit=crop&q=80&w=800" alt="Galería 3">
-                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
-                </div>
-                <div class="gallery-item reveal-zoom">
-                    <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&q=80&w=800" alt="Galería 4">
-                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
-                </div>
-                <div class="gallery-item reveal-zoom reveal-delay-1">
-                    <img src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=800" alt="Galería 5">
-                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
-                </div>
-                <div class="gallery-item reveal-zoom reveal-delay-2">
-                    <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?auto=format&fit=crop&q=80&w=800" alt="Galería 6">
-                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
-                </div>
+            <div class="gallery-grid" id="home-gallery-grid">
+                <!-- Se cargarán dinámicamente desde la base de datos -->
+                <p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Cargando fotos...</p>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="galeria.html" class="btn-listen" style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver galería completa <i class="fas fa-images"></i></a>
             </div>
         </div>
     </section>
@@ -318,8 +302,28 @@
             <div class="blog-grid" id="blog-grid">
                 <!-- Los blogs se cargarán dinámicamente aquí -->
             </div>
+            <div style="text-align: center; margin-top: 4rem;">
+                <a href="blog.html" class="btn-listen" style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver todas las noticias <i class="fas fa-plus-circle"></i></a>
+            </div>
         </div>
     </section>
+
+    <!-- Blog Reader Modal (Home) -->
+    <div class="blog-reader-modal" id="blog-modal-reader">
+        <div class="blog-reader-content" data-lenis-prevent>
+            <span class="blog-modal-close" id="blog-modal-close-reader">&times;</span>
+            <div class="blog-reader-header">
+                <img src="" alt="" id="modal-blog-img-reader">
+            </div>
+            <div class="blog-reader-body">
+                <span class="blog-date" id="modal-blog-date-reader">Fecha</span>
+                <h2 id="modal-blog-title-reader">Título del Blog</h2>
+                <div class="blog-text-content" id="modal-blog-text-reader">
+                    <!-- Contenido -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal para Gestión de Blogs (Crear/Editar) -->
     <div class="modal" id="blog-modal">
@@ -376,9 +380,9 @@
             </div>
 
             <div class="footer-bottom">
-            <p>&copy; 2026 Peña Los Magníficos. Zaragoza, España.</p>
-            <p>Creado por <strong>Manuel Gorostiza Mateo</strong> & <strong>David Azpilicueta Arrechea</strong></p>
-        </div>
+                <p>&copy; 2026 Peña Los Magníficos. Zaragoza, España.</p>
+                <p>Creado por <strong>Manuel Gorostiza Mateo</strong> & <strong>David Azpilicueta Arrechea</strong></p>
+            </div>
     </footer>
 
     <!-- Lightbox -->
@@ -392,7 +396,7 @@
     <div class="modal" id="login-modal">
         <div class="modal-content">
             <span class="modal-close" id="modal-close">&times;</span>
-            <h2>Acceso Socios</h2>
+            <h2>Acceso Administrador</h2>
             <form class="login-form" id="login-form">
                 <div class="form-group">
                     <label for="username">Usuario</label>

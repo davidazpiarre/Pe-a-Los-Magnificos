@@ -5,55 +5,63 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // --- Smooth Scroll (Lenis) ---
-    const lenis = new Lenis({
-        duration: 1.2,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        direction: 'vertical',
-        gestureDirection: 'vertical',
-        smooth: true,
-        mouseMultiplier: 1,
-        smoothTouch: false,
-        touchMultiplier: 2,
-        infinite: false,
-    });
-
-    function raf(time) {
-        lenis.raf(time);
-        requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-
-    // Integrate with anchor links for smooth scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            if (targetId === '#' || targetId === '') return;
-            
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
-                lenis.scrollTo(targetElement, {
-                    offset: -20, // Small offset for better positioning
-                    duration: 1.5
-                });
-            }
+    if (typeof Lenis !== 'undefined') {
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
         });
-    });
+
+        window.lenis = lenis;
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // Integrate with anchor links for smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                
+                // Only handle if it's a valid internal ID (starts with # and is not just # or #!)
+                if (href.startsWith('#') && href.length > 1 && !href.startsWith('#!')) {
+                    const targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        e.preventDefault();
+                        lenis.scrollTo(targetElement, {
+                            offset: -20,
+                            duration: 1.5
+                        });
+                    }
+                }
+            });
+        });
+    }
 
     // --- Sidebar Toggle (Desktop & Mobile) ---
-    const desktopToggle = document.getElementById('desktop-nav-toggle');
-    const burgerMob = document.getElementById('burger-mob');
+    const burgerMenu = document.getElementById('burger-menu');
+    const burgerMob = document.getElementById('burger-mob'); // Keep for compatibility if still used
     const sidebarClose = document.getElementById('sidebar-close');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     const mainSidebar = document.getElementById('main-sidebar');
+    const desktopToggle = document.getElementById('desktop-nav-toggle');
 
     const toggleSidebar = () => {
         mainSidebar.classList.toggle('active');
         if (sidebarOverlay) sidebarOverlay.classList.toggle('active');
     };
 
-    if (desktopToggle) desktopToggle.addEventListener('click', toggleSidebar);
+    if (burgerMenu) burgerMenu.addEventListener('click', toggleSidebar);
     if (burgerMob) burgerMob.addEventListener('click', toggleSidebar);
+    if (desktopToggle) desktopToggle.addEventListener('click', toggleSidebar);
 
     if (sidebarClose) {
         sidebarClose.addEventListener('click', () => {
@@ -101,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             lightboxImg.src = item.querySelector('img').src;
             lightbox.classList.add('active');
             document.body.style.overflow = 'hidden';
+            if (window.lenis) window.lenis.stop();
         });
     });
 
@@ -108,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxClose.onclick = () => {
             lightbox.classList.remove('active');
             document.body.style.overflow = 'auto';
+            if (window.lenis) window.lenis.start();
         };
     }
 
@@ -134,11 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Login Modal & Auth ---
-    const loginTriggers = document.querySelectorAll('#login-trigger');
+    const loginTriggers = document.querySelectorAll('#login-trigger, #login-trigger-header');
     const loginModal = document.getElementById('login-modal');
     const modalClose = document.getElementById('modal-close');
     const loginForm = document.getElementById('login-form');
     const authContainerSidebar = document.getElementById('auth-container-sidebar');
+    const authContainerHeader = document.getElementById('auth-container-header');
 
     loginTriggers.forEach(trigger => {
         trigger.onclick = (e) => {
@@ -153,6 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const updateUI = (user) => {
+        // Update Sidebar Auth
         if (authContainerSidebar) {
             authContainerSidebar.innerHTML = `
                 <div class="user-sidebar-info">
@@ -162,19 +174,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="sidebar-auth-actions">
                         ${user.role === 'admin' ? '<a href="dashboard.html" class="btn-dash-sidebar"><i class="fas fa-tachometer-alt"></i> Dashboard</a>' : ''}
-                        <a href="#" class="btn-logout-sidebar" id="logout-btn-sidebar"><i class="fas fa-sign-out-alt"></i> Salir</a>
+                        <a href="#" class="btn-logout-sidebar logout-action"><i class="fas fa-sign-out-alt"></i> Salir</a>
                     </div>
                 </div>
             `;
-            const logoutBtn = document.getElementById('logout-btn-sidebar');
-            if (logoutBtn) {
-                logoutBtn.onclick = (e) => {
-                    e.preventDefault();
-                    localStorage.clear();
-                    window.location.reload();
-                };
-            }
         }
+
+        // Update Header Auth
+        if (authContainerHeader) {
+            authContainerHeader.innerHTML = `
+                <div class="user-header-info">
+                    <div class="user-badge-header">
+                        <i class="fas fa-user-circle"></i>
+                        <span>${user.name}</span>
+                    </div>
+                    ${user.role === 'admin' ? '<a href="dashboard.html" class="btn-admin-action" title="Panel de Control"><i class="fas fa-tachometer-alt"></i></a>' : ''}
+                    <a href="#" class="btn-admin-action logout logout-action" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></a>
+                </div>
+            `;
+        }
+
+        // Attach Logout Action
+        document.querySelectorAll('.logout-action').forEach(btn => {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                localStorage.clear();
+                window.location.reload();
+            };
+        });
     };
 
     if (loginForm) {
@@ -211,30 +238,150 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Load Blogs (Homepage Only) ---
     const blogGrid = document.getElementById('blog-grid');
+    let allHomepageBlogs = [];
+
     const loadBlogs = async () => {
         if (!blogGrid) return;
         try {
             const res = await fetch('http://localhost:3000/api/blogs');
             const blogs = await res.json();
+            allHomepageBlogs = blogs;
+
             if (blogs.length === 0) {
                 blogGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">No hay noticias todavía.</p>';
                 return;
             }
-            blogGrid.innerHTML = blogs.map(blog => `
-                <article class="blog-card">
+            blogGrid.innerHTML = blogs.map((blog, index) => `
+                <article class="blog-card reveal" onclick="openHomeBlogReader(${index})">
                     <div class="blog-img"><img src="${blog.image}" alt=""></div>
                     <div class="blog-info">
                         <span class="blog-date">${blog.date}</span>
                         <h3>${blog.title}</h3>
-                        <p>${blog.content}</p>
-                        <a href="#" class="blog-link">Leer más →</a>
+                        <p>${blog.content.substring(0, 120)}...</p>
+                        <span class="blog-link" style="cursor: pointer;">Leer más →</span>
                     </div>
                 </article>
             `).join('');
+
+            // Re-trigger reveal animations
+            if (window.revealObserver) {
+                document.querySelectorAll('.blog-card.reveal').forEach(el => window.revealObserver.observe(el));
+            }
         } catch (err) { console.error(err); }
     };
 
+    // --- Load Activities (Homepage Only) ---
+    const homeActivitiesGrid = document.getElementById('home-activities-grid');
+    const loadHomeActivities = async () => {
+        if (!homeActivitiesGrid) return;
+        try {
+            const res = await fetch('http://localhost:3000/api/activities?year=2025');
+            const activities = await res.json();
+            
+            if (activities.length === 0) {
+                homeActivitiesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">No hay actividades programadas próximamente.</p>';
+                return;
+            }
+
+            // Mostramos solo las 3 primeras para la home
+            const homeActivities = activities.slice(0, 3);
+            homeActivitiesGrid.innerHTML = homeActivities.map(act => `
+                <div class="activity-item reveal">
+                    <div class="activity-img">
+                        <img src="${act.image}" alt="${act.title}">
+                    </div>
+                    <div class="activity-info">
+                        <span class="activity-date">${act.date}</span>
+                        <h3>${act.title}</h3>
+                        <p>${act.description}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            if (window.revealObserver) {
+                document.querySelectorAll('.activity-item.reveal').forEach(el => window.revealObserver.observe(el));
+            }
+        } catch (err) { console.error(err); }
+    };
+
+    // --- Load Gallery (Homepage Only) ---
+    const homeGalleryGrid = document.getElementById('home-gallery-grid');
+    const loadHomeGallery = async () => {
+        if (!homeGalleryGrid) return;
+        try {
+            const res = await fetch('http://localhost:3000/api/gallery');
+            const images = await res.json();
+            
+            if (images.length === 0) {
+                homeGalleryGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">No hay fotos en la galería todavía.</p>';
+                return;
+            }
+
+            // Mostramos solo las 6 últimas fotos
+            const homeImages = images.slice(0, 6);
+            homeGalleryGrid.innerHTML = homeImages.map(img => `
+                <div class="gallery-item reveal-zoom">
+                    <img src="${img.image}" alt="${img.title || 'Foto'}">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+            `).join('');
+
+            // Re-vincular eventos de lightbox para los nuevos elementos
+            const newGalleryItems = homeGalleryGrid.querySelectorAll('.gallery-item');
+            newGalleryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    lightboxImg.src = item.querySelector('img').src;
+                    lightbox.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    if (window.lenis) window.lenis.stop();
+                });
+            });
+
+            if (window.revealObserver) {
+                document.querySelectorAll('.gallery-item.reveal-zoom').forEach(el => window.revealObserver.observe(el));
+            }
+        } catch (err) { console.error(err); }
+    };
+
+    window.openHomeBlogReader = (index) => {
+        const blog = allHomepageBlogs[index];
+        if(!blog) return;
+
+        const modal = document.getElementById('blog-modal-reader');
+        if(!modal) return;
+
+        document.getElementById('modal-blog-img-reader').src = blog.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600';
+        document.getElementById('modal-blog-date-reader').innerText = blog.date;
+        document.getElementById('modal-blog-title-reader').innerText = blog.title;
+        document.getElementById('modal-blog-text-reader').innerHTML = blog.content.split('\n').map(p => `<p style="margin-bottom: 1.5rem;">${p}</p>`).join('');
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        if (window.lenis) window.lenis.stop();
+    };
+
+    const closeHomeBlogReader = () => {
+        const modal = document.getElementById('blog-modal-reader');
+        if(modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+            if (window.lenis) window.lenis.start();
+        }
+    };
+
+    const closeBtn = document.getElementById('blog-modal-close-reader');
+    if(closeBtn) closeBtn.onclick = closeHomeBlogReader;
+
+    const modalOverlay = document.getElementById('blog-modal-reader');
+    if(modalOverlay) {
+        modalOverlay.onclick = (e) => {
+            if(e.target.id === 'blog-modal-reader') closeHomeBlogReader();
+        };
+    }
+
     loadBlogs();
+    loadHomeActivities();
+    loadHomeGallery();
 
     // --- Load Settings (Podcast Links) ---
     const loadSettings = async () => {
@@ -312,8 +459,8 @@ document.addEventListener('DOMContentLoaded', () => {
         rootMargin: "0px 0px -50px 0px"
     };
 
-    const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
-    revealElements.forEach(el => revealObserver.observe(el));
+    window.revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+    revealElements.forEach(el => window.revealObserver.observe(el));
 
     // --- Dynamic Timeline Line Growth ---
     const timeline = document.querySelector('.timeline');
