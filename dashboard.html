@@ -142,6 +142,7 @@
             <a href="#blogs-manage" data-target="blogs-manage"><i class="fas fa-edit"></i> Gestión Noticias</a>
             <a href="#gallery-manage" data-target="gallery-manage"><i class="fas fa-images"></i> Galería / Archivo</a>
             <a href="#activities-manage" data-target="activities-manage"><i class="fas fa-calendar-check"></i> Organizar Actividades</a>
+            <a href="#colaboradores-manage" data-target="colaboradores-manage"><i class="fas fa-handshake"></i> Gestión Colaboradores</a>
             <a href="#podcasts-manage" data-target="podcasts-manage"><i class="fas fa-podcast"></i> Enlaces Podcasts</a>
             <div style="margin-top: auto; padding: 1rem;">
                 <a href="index.html" style="color: #fda4af;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
@@ -196,8 +197,23 @@
             </div>
             <div class="card">
                 <table class="table">
-                    <thead><tr><th>Año</th><th>Fecha</th><th>Título</th><th>Acciones</th></tr></thead>
+                    <thead><tr><th>Año</th><th>Fecha</th><th>Título</th><th>Estado</th><th>Acciones</th></tr></thead>
                     <tbody id="act-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        </section>
+        
+        <section id="colaboradores-manage" class="section">
+            <div class="top-bar">
+                <h1>Gestión de Colaboradores</h1>
+                <button class="btn btn-primary" id="add-col-btn"><i class="fas fa-handshake"></i> Nuevo Colaborador</button>
+            </div>
+            <div class="card">
+                <table class="table">
+                    <thead><tr><th>Logo</th><th>Nombre</th><th>Enlace</th><th>Acciones</th></tr></thead>
+                    <tbody id="col-tbody"></tbody>
                 </table>
             </div>
         </section>
@@ -277,9 +293,16 @@
             <h2 id="act-m-title">Organizar Actividad</h2>
             <form id="act-form" style="margin-top: 1.5rem;">
                 <input type="hidden" id="ac-id">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                    <div class="form-group"><label>Año</label><input type="number" id="ac-year" required value="2025"></div>
-                    <div class="form-group"><label>Fecha (Texto)</label><input type="text" id="ac-date" placeholder="Ej: 15 May, 2024"></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group"><label>Año (Filtro)</label><input type="number" id="ac-year" required value="2025"></div>
+                    <div class="form-group"><label>Fecha Completa</label><input type="date" id="ac-date" required></div>
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <select id="ac-status">
+                            <option value="upcoming">Próximamente (Verde)</option>
+                            <option value="past">Finalizada (Rojo)</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group"><label>Título de la Actividad</label><input type="text" id="ac-title" required></div>
                 <div class="form-group"><label>Descripción</label><textarea id="ac-desc" rows="3"></textarea></div>
@@ -292,6 +315,28 @@
                     <input type="hidden" id="ac-img">
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="act-submit-btn">Guardar Actividad</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL COLABORADORES -->
+    <div class="modal" id="col-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="col-m-title">Gestionar Colaborador</h2>
+            <form id="col-form" style="margin-top: 1.5rem;">
+                <input type="hidden" id="co-id">
+                <div class="form-group"><label>Nombre del Colaborador</label><input type="text" id="co-name" required></div>
+                <div class="form-group"><label>Enlace Web (Redirección)</label><input type="url" id="co-link" required placeholder="https://ejemplo.com"></div>
+                <div class="form-group">
+                    <label>Logo del Colaborador</label>
+                    <input type="file" id="co-file" accept="image/*" onchange="previewImage(this, 'co-preview-img')">
+                    <div id="co-preview-container" style="margin-top: 10px; text-align: center;">
+                        <img id="co-preview-img" src="" style="max-width: 100%; max-height: 120px; border-radius: 8px; display: none; border: 1px solid var(--border);">
+                    </div>
+                    <input type="hidden" id="co-img">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;" id="col-submit-btn">Guardar Colaborador</button>
             </form>
         </div>
     </div>
@@ -358,6 +403,7 @@
                 if(target === 'blogs-manage') refreshBlogs();
                 if(target === 'gallery-manage') refreshGallery();
                 if(target === 'activities-manage') refreshActivities();
+                if(target === 'colaboradores-manage') refreshColabs();
                 if(target === 'podcasts-manage') refreshPods();
                 if(target === 'dash-overview') refreshStats();
             };
@@ -541,23 +587,49 @@
             }
         };
 
+        // Auto-completar año al cambiar la fecha
+        document.getElementById('ac-date').addEventListener('change', (e) => {
+            const dateVal = e.target.value;
+            if (dateVal) {
+                const year = dateVal.split('-')[0];
+                document.getElementById('ac-year').value = year;
+            }
+        });
+
         // ACTIVITIES MANAGEMENT
         async function refreshActivities() {
             try {
                 const res = await fetch(`${api}/activities`);
                 currentActivities = await res.json();
                 const tbody = document.getElementById('act-tbody');
-                tbody.innerHTML = currentActivities.map(a => `
+                tbody.innerHTML = currentActivities.map(a => {
+                    // Lógica de estado automático
+                    let status = a.status || 'upcoming';
+                    if (status !== 'past' && a.date) {
+                        const [d, m, y] = a.date.split('/');
+                        const actDate = new Date(y, m - 1, d);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (actDate < today) status = 'past';
+                    }
+
+                    return `
                     <tr>
                         <td><strong>${a.year}</strong></td>
                         <td>${a.date}</td>
                         <td>${a.title}</td>
                         <td>
+                            <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; background: ${status === 'past' ? '#fee2e2' : '#dcfce7'}; color: ${status === 'past' ? '#ef4444' : '#22c55e'};">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: currentColor;"></span>
+                                ${status === 'past' ? 'Finalizada' : 'Próximamente'}
+                            </span>
+                        </td>
+                        <td>
                             <button class="icon-btn" onclick="editActivity(${a.id})"><i class="fas fa-pencil-alt"></i></button>
                             <button class="icon-btn delete" onclick="deleteActivity(${a.id})"><i class="fas fa-trash"></i></button>
                         </td>
                     </tr>
-                `).join('');
+                `}).join('');
             } catch (e) {}
         }
 
@@ -574,10 +646,19 @@
             if(act) {
                 document.getElementById('ac-id').value = act.id;
                 document.getElementById('ac-year').value = act.year;
-                document.getElementById('ac-date').value = act.date;
+                
+                // Convertir fecha DD/MM/YYYY a YYYY-MM-DD para el input type="date"
+                let dateVal = act.date;
+                if (dateVal && dateVal.includes('/')) {
+                    const [d, m, y] = dateVal.split('/');
+                    dateVal = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
+                }
+                document.getElementById('ac-date').value = dateVal;
+                
                 document.getElementById('ac-title').value = act.title;
                 document.getElementById('ac-desc').value = act.description;
                 document.getElementById('ac-img').value = act.image;
+                document.getElementById('ac-status').value = act.status || 'upcoming';
                 const preview = document.getElementById('ac-preview-img');
                 preview.src = act.image;
                 preview.style.display = 'inline-block';
@@ -600,12 +681,21 @@
                 if (!id && fileInput.files.length === 0) throw new Error('Selecciona una imagen');
                 if (fileInput.files.length > 0) imageUrl = await uploadImage(fileInput.files[0]);
 
+                // Formatear fecha de YYYY-MM-DD a DD/MM/YYYY para guardar
+                const rawDate = document.getElementById('ac-date').value;
+                let formattedDate = rawDate;
+                if (rawDate && rawDate.includes('-')) {
+                    const [y, m, d] = rawDate.split('-');
+                    formattedDate = `${d}/${m}/${y}`;
+                }
+
                 const data = {
                     year: document.getElementById('ac-year').value,
-                    date: document.getElementById('ac-date').value,
+                    date: formattedDate,
                     title: document.getElementById('ac-title').value,
                     description: document.getElementById('ac-desc').value,
-                    image: imageUrl
+                    image: imageUrl,
+                    status: document.getElementById('ac-status').value
                 };
 
                 const method = id ? 'PUT' : 'POST';
@@ -658,7 +748,94 @@
 
         document.querySelectorAll('.close-modal').forEach(c => c.onclick = () => document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')));
 
+        // COLABORADORES
+        let currentColabs = [];
+        async function refreshColabs() {
+            try {
+                const res = await fetch(`${api}/collaborators`);
+                currentColabs = await res.json();
+                const tbody = document.getElementById('col-tbody');
+                tbody.innerHTML = currentColabs.map(c => `
+                    <tr>
+                        <td><img src="${c.image}" style="height: 30px; border-radius: 4px;"></td>
+                        <td><strong>${c.name}</strong></td>
+                        <td><a href="${c.link}" target="_blank" style="color: var(--primary-blue); font-size: 0.8rem;">${c.link}</a></td>
+                        <td>
+                            <button class="icon-btn" onclick="editColab(${c.id})"><i class="fas fa-pencil-alt"></i></button>
+                            <button class="icon-btn delete" onclick="deleteColab(${c.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) {}
+        }
+
+        window.editColab = (id) => {
+            const c = currentColabs.find(x => x.id === id);
+            if(c) {
+                document.getElementById('co-id').value = c.id;
+                document.getElementById('co-name').value = c.name;
+                document.getElementById('co-link').value = c.link;
+                document.getElementById('co-img').value = c.image;
+                document.getElementById('co-preview-img').src = c.image;
+                document.getElementById('co-preview-img').style.display = 'inline-block';
+                document.getElementById('col-m-title').innerText = "Editar Colaborador";
+                document.getElementById('col-modal').classList.add('active');
+            }
+        };
+
+        window.deleteColab = async (id) => {
+            if(confirm('¿Eliminar colaborador?')) {
+                await fetch(`${api}/collaborators/${id}`, { method: 'DELETE', headers });
+                refreshColabs();
+            }
+        };
+
+        document.getElementById('add-col-btn').onclick = () => {
+            document.getElementById('col-form').reset();
+            document.getElementById('co-id').value = '';
+            document.getElementById('co-preview-img').style.display = 'none';
+            document.getElementById('col-m-title').innerText = "Nuevo Colaborador";
+            document.getElementById('col-modal').classList.add('active');
+        };
+
+        document.getElementById('col-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const submitBtn = document.getElementById('col-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Guardando...";
+
+            try {
+                let imageUrl = document.getElementById('co-img').value;
+                const fileInput = document.getElementById('co-file');
+                if (fileInput.files.length > 0) imageUrl = await uploadImage(fileInput.files[0]);
+
+                const id = document.getElementById('co-id').value;
+                const data = {
+                    name: document.getElementById('co-name').value,
+                    link: document.getElementById('co-link').value,
+                    image: imageUrl
+                };
+
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${api}/collaborators/${id}` : `${api}/collaborators`;
+
+                await fetch(url, {
+                    method,
+                    headers,
+                    body: JSON.stringify(data)
+                });
+
+                document.getElementById('col-modal').classList.remove('active');
+                refreshColabs();
+            } catch (e) { alert(e.message); }
+            finally { 
+                submitBtn.disabled = false; 
+                submitBtn.innerText = "Guardar Colaborador";
+            }
+        };
+
         refreshStats();
+        refreshColabs();
     </script>
 </body>
 </html>

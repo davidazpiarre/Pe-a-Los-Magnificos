@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard.html
+Disallow: /server/
+Sitemap: https://www.penalosmagnificos.com/sitemap.xml

@@ -56,9 +56,24 @@ async function setupDatabase() {
             description TEXT,
             date TEXT,
             image TEXT,
-            year TEXT
+            year TEXT,
+            status TEXT DEFAULT 'upcoming'
+        );
+
+        CREATE TABLE IF NOT EXISTS collaborators (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT,
+            image TEXT,
+            link TEXT
         );
     `);
+
+    // Migración: Asegurar que la columna 'status' existe
+    try {
+        await db.run("ALTER TABLE activities ADD COLUMN status TEXT DEFAULT 'upcoming'");
+    } catch (e) {
+        // La columna probablemente ya existe
+    }
 
     // Inicializar configuración por defecto si no existe
     const podcast1 = await db.get('SELECT * FROM settings WHERE key = ?', ['podcast1_link']);

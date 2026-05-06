@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 const href = this.getAttribute('href');
-                
+
                 // Only handle if it's a valid internal ID (starts with # and is not just # or #!)
                 if (href.startsWith('#') && href.length > 1 && !href.startsWith('#!')) {
                     const targetElement = document.querySelector(href);
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', () => {
             // Don't close if it's a dropdown trigger
             if (link.classList.contains('dropdown-trigger')) return;
-            
+
             mainSidebar.classList.remove('active');
             if (sidebarOverlay) sidebarOverlay.classList.remove('active');
         });
@@ -144,12 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Login Modal & Auth ---
-    const loginTriggers = document.querySelectorAll('#login-trigger, #login-trigger-header');
+    const loginTriggers = document.querySelectorAll('#login-trigger, #login-trigger-header, #login-trigger-footer');
     const loginModal = document.getElementById('login-modal');
     const modalClose = document.getElementById('modal-close');
     const loginForm = document.getElementById('login-form');
     const authContainerSidebar = document.getElementById('auth-container-sidebar');
     const authContainerHeader = document.getElementById('auth-container-header');
+    const authContainerFooter = document.getElementById('auth-container-footer');
 
     loginTriggers.forEach(trigger => {
         trigger.onclick = (e) => {
@@ -191,6 +192,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     ${user.role === 'admin' ? '<a href="dashboard.html" class="btn-admin-action" title="Panel de Control"><i class="fas fa-tachometer-alt"></i></a>' : ''}
                     <a href="#" class="btn-admin-action logout logout-action" title="Cerrar sesión"><i class="fas fa-sign-out-alt"></i></a>
                 </div>
+            `;
+        }
+        // Update Footer Auth
+        if (authContainerFooter) {
+            authContainerFooter.innerHTML = `
+                <span style="font-weight: 700; color: #c5a059;">Hola, ${user.name}</span>
+                ${user.role === 'admin' ? '| <a href="dashboard.html" class="btn-dash-footer" style="text-decoration: none; color: inherit; font-weight: 700; margin: 0 5px;">Dashboard</a>' : ''}
+                | <a href="#" class="logout-action" style="text-decoration: none; color: #ef4444; font-weight: 600;">Cerrar sesión</a>
             `;
         }
 
@@ -277,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch('http://localhost:3000/api/activities?year=2025');
             const activities = await res.json();
-            
+
             if (activities.length === 0) {
                 homeActivitiesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">No hay actividades programadas próximamente.</p>';
                 return;
@@ -285,18 +294,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Mostramos solo las 3 primeras para la home
             const homeActivities = activities.slice(0, 3);
-            homeActivitiesGrid.innerHTML = homeActivities.map(act => `
+            homeActivitiesGrid.innerHTML = homeActivities.map(act => {
+                // Lógica de estado automático
+                let status = act.status || 'upcoming';
+                if (status !== 'past' && act.date) {
+                    const [d, m, y] = act.date.split('/');
+                    const actDate = new Date(y, m - 1, d);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    if (actDate < today) status = 'past';
+                }
+
+                return `
                 <div class="activity-item reveal">
                     <div class="activity-img">
                         <img src="${act.image}" alt="${act.title}">
                     </div>
                     <div class="activity-info">
-                        <span class="activity-date">${act.date}</span>
+                        <div class="status-badge ${status === 'past' ? 'status-past' : 'status-upcoming'}">
+                            <span class="status-dot"></span>
+                            ${status === 'past' ? 'Finalizada' : 'Próximamente'}
+                        </div>
+                        <div class="activity-date-full">
+                            <i class="far fa-calendar-alt"></i>
+                            <span>${act.date}</span>
+                        </div>
                         <h3>${act.title}</h3>
                         <p>${act.description}</p>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
 
             if (window.revealObserver) {
                 document.querySelectorAll('.activity-item.reveal').forEach(el => window.revealObserver.observe(el));
@@ -311,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const res = await fetch('http://localhost:3000/api/gallery');
             const images = await res.json();
-            
+
             if (images.length === 0) {
                 homeGalleryGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">No hay fotos en la galería todavía.</p>';
                 return;
@@ -343,18 +370,48 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) { console.error(err); }
     };
 
+    // --- Load Collaborators ---
+    const loadCollaborators = async () => {
+        const grid = document.getElementById('colaboradores-grid');
+        if (!grid) return;
+
+        try {
+            const res = await fetch('http://localhost:3000/api/collaborators');
+            const collaborators = await res.json();
+
+            if (collaborators.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; opacity: 0.5;">No hay colaboradores registrados.</p>';
+                return;
+            }
+
+            grid.innerHTML = collaborators.map(c => `
+                <a href="${c.link}" target="_blank" class="colaborador-card reveal">
+                    <img src="${c.image}" alt="${c.name}" class="colaborador-logo">
+                    <span>${c.name}</span>
+                </a>
+            `).join('');
+
+            // Observar para animaciones
+            if (window.revealObserver) {
+                document.querySelectorAll('.colaborador-card.reveal').forEach(el => window.revealObserver.observe(el));
+            }
+        } catch (e) {
+            console.error('Error al cargar colaboradores:', e);
+        }
+    };
+
     window.openHomeBlogReader = (index) => {
         const blog = allHomepageBlogs[index];
-        if(!blog) return;
+        if (!blog) return;
 
         const modal = document.getElementById('blog-modal-reader');
-        if(!modal) return;
+        if (!modal) return;
 
         document.getElementById('modal-blog-img-reader').src = blog.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600';
         document.getElementById('modal-blog-date-reader').innerText = blog.date;
         document.getElementById('modal-blog-title-reader').innerText = blog.title;
         document.getElementById('modal-blog-text-reader').innerHTML = blog.content.split('\n').map(p => `<p style="margin-bottom: 1.5rem;">${p}</p>`).join('');
-        
+
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         if (window.lenis) window.lenis.stop();
@@ -362,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeHomeBlogReader = () => {
         const modal = document.getElementById('blog-modal-reader');
-        if(modal) {
+        if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
             if (window.lenis) window.lenis.start();
@@ -370,18 +427,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const closeBtn = document.getElementById('blog-modal-close-reader');
-    if(closeBtn) closeBtn.onclick = closeHomeBlogReader;
+    if (closeBtn) closeBtn.onclick = closeHomeBlogReader;
 
     const modalOverlay = document.getElementById('blog-modal-reader');
-    if(modalOverlay) {
+    if (modalOverlay) {
         modalOverlay.onclick = (e) => {
-            if(e.target.id === 'blog-modal-reader') closeHomeBlogReader();
+            if (e.target.id === 'blog-modal-reader') closeHomeBlogReader();
         };
     }
 
     loadBlogs();
     loadHomeActivities();
     loadHomeGallery();
+    loadCollaborators();
 
     // --- Load Settings (Podcast Links) ---
     const loadSettings = async () => {
@@ -394,7 +452,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const link = document.getElementById(linkId);
                 const img = document.getElementById(imgId) || (link ? link.querySelector('img') : null);
                 const title = document.getElementById(titleId);
-                
+
                 const linkVal = settings[`${prefix}_link`];
                 const logoVal = settings[`${prefix}_logo`];
                 const titleVal = settings[`${prefix}_title`];
@@ -426,25 +484,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const countdownEl = document.getElementById('event-countdown');
     if (countdownEl) {
         const targetDate = new Date('October 11, 2025 00:00:00').getTime();
-        
+
         const updateCountdown = () => {
             const now = new Date().getTime();
             const distance = targetDate - now;
-            
+
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            
+
             countdownEl.innerText = `Fiestas del Pilar 2025: Faltan ${days}d ${hours}h ${minutes}m`;
         };
-        
+
         setInterval(updateCountdown, 60000); // Update every minute
         updateCountdown();
     }
 
     // --- SCROLL REVEAL ANIMATIONS ---
     const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-zoom');
-    
+
     const revealCallback = (entries, observer) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -465,27 +523,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Dynamic Timeline Line Growth ---
     const timeline = document.querySelector('.timeline');
     const timelineLine = document.getElementById('timeline-line');
-    
+
     if (timeline && timelineLine) {
         window.addEventListener('scroll', () => {
             const timelineRect = timeline.getBoundingClientRect();
             const windowHeight = window.innerHeight;
-            
+
             // Calculate how much of the timeline is visible
             if (timelineRect.top < windowHeight && timelineRect.bottom > 0) {
                 const visibleHeight = windowHeight - timelineRect.top;
                 const totalHeight = timelineRect.height;
                 let progress = (visibleHeight / totalHeight) * 100;
-                
+
                 // Clamp progress between 0 and 100
                 progress = Math.min(Math.max(progress, 0), 100);
-                
+
                 // Optional: delay or adjust progress for better feel
                 // For a more fluid feel, we can use the center of the viewport
                 const centerOffset = windowHeight / 2;
                 const scrollProgress = ((centerOffset - timelineRect.top) / totalHeight) * 100;
                 const finalProgress = Math.min(Math.max(scrollProgress, 0), 100);
-                
+
                 timelineLine.style.setProperty('--line-height', `${finalProgress}%`);
             }
         });
@@ -493,16 +551,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // --- TRACKING ANALYTICS EN TIEMPO REAL ---
-(function() {
+(function () {
     // Solo rastreamos en páginas públicas, no en el dashboard
-    if(window.location.pathname.includes('dashboard')) return;
+    if (window.location.pathname.includes('dashboard')) return;
 
     const deviceMatch = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry|IEMobile)/);
     const deviceType = deviceMatch ? 'Móvil' : 'Desktop';
     const isSocial = document.referrer.includes('facebook') || document.referrer.includes('twitter') || document.referrer.includes('instagram');
     const source = isSocial ? 'Social' : (document.referrer ? 'Referido' : 'Directo');
     // Para simplificar, asignamos "España" pero un caso real usaría una API GeoIP
-    const country = 'España'; 
+    const country = 'España';
 
     setTimeout(() => {
         // Enviar tracking después de 2 segundos (bounce falso si se va antes)

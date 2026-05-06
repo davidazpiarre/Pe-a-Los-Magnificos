@@ -239,7 +239,11 @@ app.get('/api/gallery', async (req, res) => {
     try {
         let query = 'SELECT * FROM gallery';
         let params = [];
-        if (year) {
+        if (year === 'Historicos') {
+            query += " WHERE (CAST(year AS INTEGER) >= 1971 AND CAST(year AS INTEGER) <= 2000) OR year = 'Historicos'";
+        } else if (year === '2000-2020') {
+            query += " WHERE (CAST(year AS INTEGER) > 2000 AND CAST(year AS INTEGER) <= 2020) OR year = '2000-2020'";
+        } else if (year) {
             query += ' WHERE year = ?';
             params.push(year);
         }
@@ -297,7 +301,11 @@ app.get('/api/activities', async (req, res) => {
     try {
         let query = 'SELECT * FROM activities';
         let params = [];
-        if (year) {
+        if (year === 'Historicos') {
+            query += " WHERE (CAST(year AS INTEGER) >= 1971 AND CAST(year AS INTEGER) <= 2000) OR year = 'Historicos'";
+        } else if (year === '2000-2020') {
+            query += " WHERE (CAST(year AS INTEGER) > 2000 AND CAST(year AS INTEGER) <= 2020) OR year = '2000-2020'";
+        } else if (year) {
             query += ' WHERE year = ?';
             params.push(year);
         }
@@ -311,13 +319,13 @@ app.get('/api/activities', async (req, res) => {
 
 // Añadir actividad (Solo Admin)
 app.post('/api/activities', authenticateToken, isAdmin, async (req, res) => {
-    const { year, title, description, image, date } = req.body;
+    const { year, title, description, image, date, status } = req.body;
     if (!year || !title || !image) return res.status(400).json({ message: 'Año, título e imagen obligatorios' });
 
     try {
         const finalDate = date || new Date().toLocaleDateString('es-ES');
-        await db.run('INSERT INTO activities (year, title, description, image, date) VALUES (?, ?, ?, ?, ?)', 
-            [year, title, description || '', image, finalDate]);
+        await db.run('INSERT INTO activities (year, title, description, image, date, status) VALUES (?, ?, ?, ?, ?, ?)', 
+            [year, title, description || '', image, finalDate, status || 'upcoming']);
         res.status(201).json({ message: 'Actividad añadida' });
     } catch (error) {
         res.status(500).json({ message: 'Error al guardar actividad' });
@@ -327,10 +335,10 @@ app.post('/api/activities', authenticateToken, isAdmin, async (req, res) => {
 // Editar actividad (Solo Admin)
 app.put('/api/activities/:id', authenticateToken, isAdmin, async (req, res) => {
     const { id } = req.params;
-    const { year, title, description, image, date } = req.body;
+    const { year, title, description, image, date, status } = req.body;
     try {
-        await db.run('UPDATE activities SET year=?, title=?, description=?, image=?, date=? WHERE id=?', 
-            [year, title, description, image, date, id]);
+        await db.run('UPDATE activities SET year=?, title=?, description=?, image=?, date=?, status=? WHERE id=?', 
+            [year, title, description, image, date, status, id]);
         res.json({ message: 'Actividad actualizada' });
     } catch (error) {
         res.status(500).json({ message: 'Error al actualizar actividad' });
@@ -405,7 +413,48 @@ app.use((err, req, res, next) => {
 setupDatabase()
     .then(database => {
         db = database;
-        app.listen(PORT, () => {
+        // --- COLABORADORES ---
+app.get('/api/collaborators', async (req, res) => {
+    try {
+        const collaborators = await db.all('SELECT * FROM collaborators');
+        res.json(collaborators);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener colaboradores' });
+    }
+});
+
+app.post('/api/collaborators', authenticateToken, isAdmin, async (req, res) => {
+    const { name, image, link } = req.body;
+    try {
+        await db.run('INSERT INTO collaborators (name, image, link) VALUES (?, ?, ?)', [name, image, link]);
+        res.status(201).json({ message: 'Colaborador añadido' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al añadir colaborador' });
+    }
+});
+
+app.put('/api/collaborators/:id', authenticateToken, isAdmin, async (req, res) => {
+    const { id } = req.params;
+    const { name, image, link } = req.body;
+    try {
+        await db.run('UPDATE collaborators SET name=?, image=?, link=? WHERE id=?', [name, image, link, id]);
+        res.json({ message: 'Colaborador actualizado' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar colaborador' });
+    }
+});
+
+app.delete('/api/collaborators/:id', authenticateToken, isAdmin, async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.run('DELETE FROM collaborators WHERE id=?', [id]);
+        res.json({ message: 'Colaborador eliminado' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar colaborador' });
+    }
+});
+
+app.listen(PORT, () => {
             console.log('------------------------------------------------');
             console.log(`🚀 SERVIDOR CORRIENDO: http://localhost:${PORT}`);
             console.log('📂 CARPETA UPLOADS LISTA');

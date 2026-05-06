@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actividades | Peña Los Magníficos</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-blue: #00459c;
@@ -14,10 +16,13 @@
             --bg-soft: #f4f7fa;
         }
 
-        body { background-color: var(--bg-soft); font-family: 'Inter', sans-serif; }
+        body {
+            background-color: var(--bg-soft);
+            font-family: 'Inter', sans-serif;
+        }
 
         .activities-hero {
-            height: 400px;
+            height: 200px;
             background: linear-gradient(rgba(0, 69, 156, 0.8), rgba(0, 45, 102, 0.9)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1920');
             background-size: cover;
             background-position: center top;
@@ -26,82 +31,150 @@
             justify-content: center;
             color: white;
             text-align: center;
+            margin-bottom: 0;
         }
 
-        .hero-content h1 { font-size: 3.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; color: white; }
-        
+        .hero-content h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: white;
+        }
+
         .year-selector {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin: -30px auto 50px;
+            gap: 10px;
+            margin: -25px auto 50px;
             position: relative;
             z-index: 10;
+            background: white;
+            padding: 12px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+            max-width: 1000px;
+            flex-wrap: wrap;
         }
 
         .year-link {
             background: white;
             padding: 12px 25px;
             border-radius: 50px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
             font-weight: 700;
             color: var(--primary-blue);
             transition: 0.3s;
             text-decoration: none;
         }
 
-        .year-link:hover, .year-link.active {
+        .year-link:hover,
+        .year-link.active {
             background: var(--primary-blue);
             color: white;
             transform: translateY(-5px);
         }
 
-        .activities-container { max-width: 1000px; margin: 0 auto 100px; padding: 0 20px; }
+        .activities-container {
+            max-width: 1300px;
+            margin: 0 auto 100px;
+            padding: 0 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
 
         .activity-row {
             display: flex;
+            flex-direction: column;
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
             transition: 0.4s;
-            border-left: 5px solid transparent;
+            border-top: 4px solid transparent;
+            height: 100%;
         }
 
-        .activity-row:hover { transform: scale(1.02); border-left-color: var(--primary-blue); box-shadow: 0 20px 45px rgba(0,0,0,0.08); }
+        .activity-row:hover {
+            transform: translateY(-8px);
+            border-top-color: var(--primary-blue);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+        }
 
-        .activity-image { width: 350px; min-height: 250px; flex-shrink: 0; }
-        .activity-image img { width: 100%; height: 100%; object-fit: cover; }
+        .activity-image {
+            width: 100%;
+            height: 180px;
+            flex-shrink: 0;
+        }
 
-        .activity-details { padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .activity-details .date { color: var(--accent-gold); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .activity-details h3 { font-size: 1.8rem; margin-bottom: 15px; color: #1a1a1a; }
-        .activity-details p { color: #666; line-height: 1.7; margin-bottom: 20px; }
+        .activity-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .activity-details {
+            padding: 18px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .activity-details .date {
+            color: var(--accent-gold);
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .activity-details h3 {
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            font-weight: 800;
+        }
+
+        .activity-details p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            font-size: 0.85rem;
+            flex: 1;
+        }
 
         .btn-gallery-link {
             align-self: flex-start;
-            padding: 10px 20px;
+            padding: 7px 15px;
             border: 2px solid var(--primary-blue);
             color: var(--primary-blue);
-            border-radius: 10px;
+            border-radius: 8px;
             font-weight: 700;
             transition: 0.3s;
             text-decoration: none;
+            font-size: 0.85rem;
         }
 
-        .btn-gallery-link:hover { background: var(--primary-blue); color: white; }
+        .btn-gallery-link:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
 
         @media (max-width: 768px) {
-            .activity-row { flex-direction: column; }
-            .activity-image { width: 100%; height: 200px; }
+            .activities-container {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* --- Lightbox Styles --- */
         .lightbox {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.95);
             display: none;
             align-items: center;
@@ -124,7 +197,7 @@
             position: relative;
             transform: scale(0.9);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
             border-radius: 8px;
         }
 
@@ -198,16 +271,31 @@
             transform: translateY(-50%) scale(1.1);
         }
 
-        .lightbox-prev { left: 40px; }
-        .lightbox-next { right: 40px; }
+        .lightbox-prev {
+            left: 40px;
+        }
+
+        .lightbox-next {
+            right: 40px;
+        }
 
         @media (max-width: 768px) {
-            .lightbox-prev { left: 10px; }
-            .lightbox-next { right: 10px; }
-            .lightbox-nav { width: 40px; height: 40px; }
+            .lightbox-prev {
+                left: 10px;
+            }
+
+            .lightbox-next {
+                right: 10px;
+            }
+
+            .lightbox-nav {
+                width: 40px;
+                height: 40px;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Live Event Ticker -->
     <div class="live-event-ticker">
@@ -263,11 +351,10 @@
         </div>
 
         <nav class="sidebar-nav">
-            <ul class="nav-list">
-                <li><a href="index.html#inicio" class="nav-item"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="index.html#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a></li>
-                <li><a href="actividades.html" class="nav-item active"><i class="fas fa-calendar-alt"></i> Actividades</a></li>
-                <li><a href="galeria.html" class="nav-item"><i class="fas fa-images"></i> Galería</a></li>
+            <div id="auth-container-sidebar">
+                <!-- Acceso Admin movido al footer -->
+            </div>    <li><a href="index.html#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a>
+                <!-- Acceso Admin movido al footer --><a href="galeria.html" class="nav-item"><i class="fas fa-images"></i> Galería</a></li>
                 <li><a href="blog.html" class="nav-item"><i class="fas fa-newspaper"></i> Blog y Noticias</a></li>
             </ul>
         </nav>
@@ -293,8 +380,28 @@
     </div>
 
     <footer style="background: #1a1a1a; color: white; padding: 40px 0; text-align: center;">
-        <p>&copy; 2026 Peña Los Magníficos</p>
+        <p>&copy; 2026 Peña Los Magníficos | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
     </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-close">&times;</span>
+            <h2>Acceso Administrador</h2>
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Tu nombre de usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">Entrar</button>
+                <div id="login-message"></div>
+            </form>
+        </div>
+    </div>
 
     <!-- Lightbox Modal -->
     <div class="lightbox" id="lightbox">
@@ -313,47 +420,72 @@
     <script>
         let currentActivitiesList = [];
         let currentActivityIndex = 0;
-        const years = [2025, 2024, 2023, 2022, 2021, 2020];
-        
+        const years = [2026, 2025, 2024, 2023, 2022, 2021, 2020, '2000-2020', 'Historicos'];
+
         const loadActivities = async () => {
             const list = document.getElementById('activities-list');
             const urlParams = new URLSearchParams(window.location.search);
             const currentYear = urlParams.get('year') || '2025';
-            
+
             if (document.getElementById('year-title')) {
-                document.getElementById('year-title').innerText = `Actividades ${currentYear}`;
+                let displayYear = currentYear;
+                if (currentYear === 'Historicos') displayYear = 'Históricos (1971-2000)';
+                if (currentYear === '2000-2020') displayYear = 'Transición (2000-2020)';
+                document.getElementById('year-title').innerText = `Actividades ${displayYear}`;
+                document.title = `Actividades ${displayYear} | Los Magníficos`;
             }
-            
+
             // Generar selector de años
             const selector = document.getElementById('year-selector');
             if (selector) {
-                selector.innerHTML = years.map(y => `
-                    <a href="?year=${y}" class="year-link ${y == currentYear ? 'active' : ''}">${y}</a>
-                `).join('');
+                selector.innerHTML = years.map(y => {
+                    let label = y;
+                    if (y === 'Historicos') label = 'Históricos (1971-2000)';
+                    if (y === '2000-2020') label = '2000-2020';
+                    return `<a href="?year=${y}" class="year-link ${y == currentYear ? 'active' : ''}">${label}</a>`;
+                }).join('');
             }
-            
+
             try {
                 const response = await fetch(`http://localhost:3000/api/activities?year=${currentYear}`);
                 currentActivitiesList = await response.json();
-                
+
                 if (currentActivitiesList.length === 0) {
                     list.innerHTML = `<div style="text-align:center; padding: 100px; opacity:0.5;"><h2>No hay actividades registradas en ${currentYear}</h2></div>`;
                     return;
                 }
 
-                list.innerHTML = currentActivitiesList.map((act, index) => `
+                list.innerHTML = currentActivitiesList.map((act, index) => {
+                    // Lógica de estado automático
+                    let status = act.status || 'upcoming';
+                    if (status !== 'past' && act.date) {
+                        const [d, m, y] = act.date.split('/');
+                        const actDate = new Date(y, m - 1, d);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        if (actDate < today) status = 'past';
+                    }
+
+                    return `
                     <div class="activity-row">
                         <div class="activity-image">
                             <img src="${act.image}" alt="${act.title}" data-index="${index}">
                         </div>
                         <div class="activity-details">
-                            <span class="date">${act.date}</span>
+                            <div class="status-badge ${status === 'past' ? 'status-past' : 'status-upcoming'}">
+                                <span class="status-dot"></span>
+                                ${status === 'past' ? 'Finalizada' : 'Próximamente'}
+                            </div>
+                            <div class="activity-date-full">
+                                <i class="far fa-calendar-alt"></i>
+                                <span>${act.date}</span>
+                            </div>
                             <h3>${act.title || 'Evento de la Peña'}</h3>
                             <p>${act.description || `Descripción del evento realizado por la peña en el año ${currentYear}. Un momento de convivencia y alegría entre todos los socios, celebrando nuestras tradiciones en Zaragoza.`}</p>
                             <a href="galeria.html?year=${currentYear}" class="btn-gallery-link">Ver fotos en Galería</a>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
 
                 // Añadir eventos a las imágenes para el Lightbox
                 setTimeout(() => {
@@ -376,11 +508,11 @@
 
         const updateLightbox = () => {
             const act = currentActivitiesList[currentActivityIndex];
-            if(!act) return;
+            if (!act) return;
 
             const lbImg = document.getElementById('lightbox-img');
             lbImg.style.opacity = '0';
-            
+
             setTimeout(() => {
                 lbImg.src = act.image;
                 document.getElementById('lightbox-title').innerText = act.title || 'Evento';
@@ -390,13 +522,13 @@
         };
 
         const nextActivity = (e) => {
-            if(e) e.stopPropagation();
+            if (e) e.stopPropagation();
             currentActivityIndex = (currentActivityIndex + 1) % currentActivitiesList.length;
             updateLightbox();
         };
 
         const prevActivity = (e) => {
-            if(e) e.stopPropagation();
+            if (e) e.stopPropagation();
             currentActivityIndex = (currentActivityIndex - 1 + currentActivitiesList.length) % currentActivitiesList.length;
             updateLightbox();
         };
@@ -411,7 +543,7 @@
         document.getElementById('lb-prev').onclick = prevActivity;
         document.getElementById('lightbox-close').onclick = closeLightbox;
         document.getElementById('lightbox').onclick = (e) => {
-            if(e.target.id === 'lightbox') closeLightbox();
+            if (e.target.id === 'lightbox') closeLightbox();
         };
 
         // Teclado
@@ -429,4 +561,5 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>

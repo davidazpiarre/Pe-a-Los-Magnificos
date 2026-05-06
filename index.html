@@ -58,10 +58,7 @@
             </nav>
 
             <div class="header-actions">
-                <div id="auth-container-header">
-                    <a href="#" id="login-trigger-header" class="btn-auth-header"><i class="fas fa-user-shield"></i>
-                        <span>Administrador</span></a>
-                </div>
+                <!-- Acceso Admin movido al footer -->
                 <div class="burger-menu" id="burger-menu">
                     <i class="fas fa-bars"></i>
                 </div>
@@ -119,7 +116,7 @@
 
         <div class="sidebar-footer">
             <div id="auth-container-sidebar">
-                <a href="#" id="login-trigger" class="btn-auth-sidebar"><i class="fas fa-lock"></i> Acceso Admin</a>
+                <!-- Acceso Admin movido al footer -->
             </div>
             <div class="sidebar-social">
                 <a href="#"><i class="fab fa-facebook-f"></i></a>
@@ -246,19 +243,21 @@
         <div class="container">
             <div class="nosotros-content">
                 <div class="nosotros-text reveal-left">
-                    <h2>Sobre Nosotros</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
-                        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat.</p>
-                    <p style="margin-top: 1rem;">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-                        dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa
-                        qui officia deserunt mollit anim id est laborum.</p>
-                    <p style="margin-top: 1rem;">Fundada con el espíritu de Zaragoza, nuestra peña representa los
-                        valores de lealtad, alegría y compromiso con nuestra cultura local.</p>
+                    <span class="section-subtitle">Nuestra Esencia</span>
+                    <h2>Valores y Tradición</h2>
+                    <p>La <strong>Peña Los Magníficos</strong> no es solo un grupo de animación; es una familia unida
+                        por el sentimiento zaragocista y el respeto a nuestra historia. Desde nuestra fundación, hemos
+                        trabajado para mantener viva la llama del Real Zaragoza en cada rincón de la ciudad.</p>
+                    <p style="margin-top: 1rem;">Nos enorgullece reconocer el talento y el esfuerzo de quienes defienden
+                        nuestro escudo, otorgando galardones como nuestro diploma de <strong>"Deportista
+                            Magnífico"</strong> a figuras que representan la nobleza y el valor de nuestra tierra, como
+                        Francho Serrano.</p>
+                    <p style="margin-top: 1rem;">Ser de los Magníficos es un compromiso con la alegría, la lealtad y el
+                        apoyo incondicional, siempre con el espíritu de los cinco héroes que nos dieron nombre.</p>
                 </div>
                 <div class="nosotros-image reveal-right">
-                    <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&q=80&w=800"
-                        alt="Sobre la peña">
+                    <img src="http://localhost:3000/uploads/1777545484505-689404270.jpg"
+                        alt="Entrega del diploma Deportista Magnífico a Francho Serrano">
                 </div>
             </div>
         </div>
@@ -273,7 +272,9 @@
                 <p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Cargando actividades...</p>
             </div>
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="actividades.html" class="btn-listen" style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver calendario completo <i class="fas fa-calendar-alt"></i></a>
+                <a href="actividades.html" class="btn-listen"
+                    style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver
+                    calendario completo <i class="fas fa-calendar-alt"></i></a>
             </div>
         </div>
     </section>
@@ -287,7 +288,20 @@
                 <p style="grid-column: 1/-1; text-align: center; opacity: 0.5;">Cargando fotos...</p>
             </div>
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="galeria.html" class="btn-listen" style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver galería completa <i class="fas fa-images"></i></a>
+                <a href="galeria.html" class="btn-listen"
+                    style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver
+                    galería completa <i class="fas fa-images"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Colaboradores Section -->
+    <section class="colaboradores section-padding" id="colaboradores" style="background: #f0f7ff;">
+        <div class="container">
+            <h2 class="reveal" style="text-align: center; margin-bottom: 4rem;">Nuestros Colaboradores</h2>
+            <div class="colaboradores-grid" id="colaboradores-grid">
+                <!-- Se cargarán dinámicamente -->
+                <p style="text-align: center; grid-column: 1/-1; opacity: 0.5;">Cargando colaboradores...</p>
             </div>
         </div>
     </section>
@@ -303,7 +317,9 @@
                 <!-- Los blogs se cargarán dinámicamente aquí -->
             </div>
             <div style="text-align: center; margin-top: 4rem;">
-                <a href="blog.html" class="btn-listen" style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver todas las noticias <i class="fas fa-plus-circle"></i></a>
+                <a href="blog.html" class="btn-listen"
+                    style="background: var(--primary-blue); display: inline-flex; align-items: center; gap: 10px;">Ver
+                    todas las noticias <i class="fas fa-plus-circle"></i></a>
             </div>
         </div>
     </section>
@@ -380,7 +396,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 Peña Los Magníficos. Zaragoza, España.</p>
+                <p>&copy; 2026 Peña Los Magníficos. Zaragoza, España. | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
                 <p>Creado por <strong>Manuel Gorostiza Mateo</strong> & <strong>David Azpilicueta Arrechea</strong></p>
             </div>
     </footer>

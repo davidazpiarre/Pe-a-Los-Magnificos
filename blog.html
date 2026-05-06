@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog y Noticias | Peña Los Magníficos</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-blue: #00459c;
@@ -14,13 +16,13 @@
             --bg-soft: #f8fafc;
         }
 
-        body { 
-            background-color: var(--bg-soft); 
-            font-family: 'Inter', sans-serif; 
+        body {
+            background-color: var(--bg-soft);
+            font-family: 'Inter', sans-serif;
         }
 
         .blog-hero {
-            height: 400px;
+            height: 200px;
             background: linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.9)), url('https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&q=80&w=1920');
             background-size: cover;
             background-position: center;
@@ -29,22 +31,22 @@
             justify-content: center;
             color: white;
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
         }
 
-        .hero-content h1 { 
-            font-size: 4rem; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            margin-bottom: 10px; 
+        .hero-content h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 0;
             color: white;
-            letter-spacing: -2px;
+            letter-spacing: -1px;
         }
 
-        .blog-container { 
-            max-width: 1200px; 
-            margin: 0 auto 100px; 
-            padding: 0 20px; 
+        .blog-container {
+            max-width: 1200px;
+            margin: 0 auto 100px;
+            padding: 0 20px;
         }
 
         .blog-full-grid {
@@ -57,7 +59,7 @@
             background: white;
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             transition: all 0.4s ease;
             height: 100%;
             display: flex;
@@ -145,11 +147,17 @@
         }
 
         @media (max-width: 768px) {
-            .hero-content h1 { font-size: 2.5rem; }
-            .blog-full-grid { grid-template-columns: 1fr; }
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .blog-full-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
+
 <body>
     <!-- Live Event Ticker -->
     <div class="live-event-ticker">
@@ -207,10 +215,12 @@
         <nav class="sidebar-nav">
             <ul class="nav-list">
                 <li><a href="index.html#inicio" class="nav-item"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="index.html#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a></li>
+                <li><a href="index.html#trayectoria" class="nav-item"><i class="fas fa-history"></i> Trayectoria</a>
+                </li>
                 <li><a href="actividades.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Actividades</a></li>
                 <li><a href="galeria.html" class="nav-item"><i class="fas fa-images"></i> Galería</a></li>
-                <li><a href="blog.html" class="nav-item active"><i class="fas fa-newspaper"></i> Blog y Noticias</a></li>
+                <li><a href="blog.html" class="nav-item active"><i class="fas fa-newspaper"></i> Blog y Noticias</a>
+                </li>
             </ul>
         </nav>
     </aside>
@@ -218,7 +228,6 @@
     <section class="blog-hero">
         <div class="hero-content">
             <h1>Blog y Noticias</h1>
-            <p style="font-size: 1.2rem; opacity: 0.9; font-weight: 300;">Mantente al día con todas las novedades de la Peña</p>
         </div>
     </section>
 
@@ -249,8 +258,10 @@
         /* Blog Modal Styles */
         .blog-reader-modal {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(15, 23, 42, 0.95);
             display: none;
             align-items: center;
@@ -277,7 +288,7 @@
             position: relative;
             transform: translateY(30px);
             transition: transform 0.4s ease;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
         }
 
         .blog-reader-modal.active .blog-reader-content {
@@ -320,7 +331,7 @@
             font-size: 1.5rem;
             cursor: pointer;
             z-index: 10;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: 0.3s;
         }
 
@@ -331,8 +342,13 @@
         }
 
         @media (max-width: 768px) {
-            .blog-reader-body { padding: 1.5rem; }
-            .blog-reader-header { height: 200px; }
+            .blog-reader-body {
+                padding: 1.5rem;
+            }
+
+            .blog-reader-header {
+                height: 200px;
+            }
         }
     </style>
 
@@ -340,11 +356,32 @@
 
     <footer style="background: #0f172a; color: white; padding: 60px 0; text-align: center;">
         <div class="container">
-            <img src="imagenes/logo-magnificos.jpg" alt="" style="width: 60px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--primary-blue);">
+            <img src="imagenes/logo-magnificos.jpg" alt=""
+                style="width: 60px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--primary-blue);">
             <h2 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">PEÑA LOS MAGNÍFICOS</h2>
-            <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2026 Zaragoza. Tradición y Amistad.</p>
+            <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2026 Zaragoza. Tradición y Amistad. | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
         </div>
     </footer>
+
+    <!-- Login Modal -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modal-close">&times;</span>
+            <h2>Acceso Administrador</h2>
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="username">Usuario</label>
+                    <input type="text" id="username" placeholder="Tu nombre de usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">Entrar</button>
+                <div id="login-message"></div>
+            </form>
+        </div>
+    </div>
 
     <script>
         const loadAllBlogs = async () => {
@@ -354,7 +391,7 @@
                 const response = await fetch('http://localhost:3000/api/blogs');
                 const blogs = await response.json();
                 console.log("Blogs recibidos:", blogs);
-                
+
                 if (blogs.length === 0) {
                     grid.innerHTML = '<div class="empty-blogs"><h2>No hay noticias publicadas todavía.</h2></div>';
                     return;
@@ -396,16 +433,16 @@
 
         const openBlogModal = (index) => {
             const blog = window.allBlogs[index];
-            if(!blog) return;
+            if (!blog) return;
 
             document.getElementById('modal-blog-img').src = blog.image || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=600';
             document.getElementById('modal-blog-date').innerText = blog.date;
             document.getElementById('modal-blog-title').innerText = blog.title;
             document.getElementById('modal-blog-text').innerHTML = blog.content.split('\n').map(p => `<p style="margin-bottom: 1.5rem;">${p}</p>`).join('');
-            
+
             document.getElementById('blog-modal').classList.add('active');
             document.body.style.overflow = 'hidden';
-            
+
             // Detener el scroll suave de Lenis para que no mueva el fondo
             if (window.lenis) window.lenis.stop();
         };
@@ -413,19 +450,19 @@
         const closeBlogModal = () => {
             document.getElementById('blog-modal').classList.remove('active');
             document.body.style.overflow = '';
-            
+
             // Reanudar el scroll suave de Lenis
             if (window.lenis) window.lenis.start();
         };
 
         document.getElementById('blog-modal-close').onclick = closeBlogModal;
         document.getElementById('blog-modal').onclick = (e) => {
-            if(e.target.id === 'blog-modal') closeBlogModal();
+            if (e.target.id === 'blog-modal') closeBlogModal();
         };
 
         // Escuchar tecla ESC
         document.addEventListener('keydown', (e) => {
-            if(e.key === 'Escape') closeBlogModal();
+            if (e.key === 'Escape') closeBlogModal();
         });
 
         window.addEventListener('load', loadAllBlogs);
@@ -435,4 +472,5 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
     <script src="script.js"></script>
 </body>
+
 </html>
