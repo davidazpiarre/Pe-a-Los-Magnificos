@@ -40,15 +40,15 @@
         }
 
         .sidebar-header {
-            padding: 2rem;
+            padding: 1rem 1.2rem;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        .sidebar-header img { width: 60px; border-radius: 50%; border: 2px solid white; margin-bottom: 10px; }
-        .sidebar-header h2 { font-size: 1rem; font-weight: 800; letter-spacing: 1px; }
+        .sidebar-header img { width: 36px; border-radius: 50%; border: 2px solid white; margin-bottom: 6px; }
+        .sidebar-header h2 { font-size: 0.85rem; font-weight: 800; letter-spacing: 1px; }
 
-        .sidebar-nav { padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 5px; }
+        .sidebar-nav { padding: 1rem 0.8rem; display: flex; flex-direction: column; gap: 5px; }
         .sidebar-nav a {
             color: rgba(255,255,255,0.7);
             text-decoration: none;
@@ -133,7 +133,7 @@
 <body>
     <aside class="sidebar">
         <div class="sidebar-header">
-            <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+            <img src="imagenes/logo-magnificos.png" alt="Logo">
             <h2>LOS MAGNÍFICOS</h2>
             <p style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">ADMIN PANEL</p>
         </div>
@@ -144,6 +144,7 @@
             <a href="#activities-manage" data-target="activities-manage"><i class="fas fa-calendar-check"></i> Organizar Actividades</a>
             <a href="#colaboradores-manage" data-target="colaboradores-manage"><i class="fas fa-handshake"></i> Gestión Colaboradores</a>
             <a href="#podcasts-manage" data-target="podcasts-manage"><i class="fas fa-podcast"></i> Enlaces Podcasts</a>
+            <a href="#event-manage" data-target="event-manage"><i class="fas fa-bullhorn"></i> Próximo Evento</a>
             <div style="margin-top: auto; padding: 1rem;">
                 <a href="index.html" style="color: #fda4af;"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
             </div>
@@ -218,6 +219,26 @@
             </div>
         </section>
 
+        <section id="event-manage" class="section">
+            <div class="top-bar"><h1>Próximo Evento (Ticker)</h1></div>
+            <div class="card">
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;">Configura el nombre y la fecha del evento que aparece en la barra superior de la web.</p>
+                <form id="event-form">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div class="form-group">
+                            <label>Nombre del Evento</label>
+                            <input type="text" id="ev-name" placeholder="Ej: Fiestas del Pilar 2026" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha del Evento</label>
+                            <input type="date" id="ev-date" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; justify-content: center;">Guardar Evento</button>
+                </form>
+            </div>
+        </section>
+
         <section id="podcasts-manage" class="section">
             <div class="top-bar"><h1>Configuración de Podcasts</h1></div>
             <div class="card">
@@ -272,7 +293,8 @@
             <form id="gal-form" style="margin-top: 1.5rem;">
                 <input type="hidden" id="g-id">
                 <div class="form-group"><label>Año del Evento</label><input type="number" id="g-year" required value="2025"></div>
-                <div class="form-group"><label>Título / Descripción</label><input type="text" id="g-title" required></div>
+                <div class="form-group"><label>Título (Principal)</label><input type="text" id="g-title" required></div>
+                <div class="form-group"><label>Pie de Foto (Opcional)</label><input type="text" id="g-caption" placeholder="Descripción adicional o pie de foto"></div>
                 <div class="form-group">
                     <label>Seleccionar Foto</label>
                     <input type="file" id="g-file" accept="image/*" onchange="previewImage(this, 'g-preview-img')">
@@ -405,6 +427,7 @@
                 if(target === 'activities-manage') refreshActivities();
                 if(target === 'colaboradores-manage') refreshColabs();
                 if(target === 'podcasts-manage') refreshPods();
+                if(target === 'event-manage') refreshEvent();
                 if(target === 'dash-overview') refreshStats();
             };
         });
@@ -528,6 +551,7 @@
                 document.getElementById('g-id').value = photo.id;
                 document.getElementById('g-year').value = photo.year;
                 document.getElementById('g-title').value = photo.title;
+                document.getElementById('g-caption').value = photo.caption || '';
                 document.getElementById('g-img').value = photo.image;
                 const preview = document.getElementById('g-preview-img');
                 preview.src = photo.image;
@@ -565,6 +589,7 @@
                 const data = {
                     year: document.getElementById('g-year').value,
                     title: document.getElementById('g-title').value,
+                    caption: document.getElementById('g-caption').value,
                     image: imageUrl
                 };
                 const method = id ? 'PUT' : 'POST';
@@ -716,6 +741,26 @@
                 await fetch(`${api}/activities/${id}`, { method: 'DELETE', headers });
                 refreshActivities();
             }
+        };
+
+        // PRÓXIMO EVENTO
+        async function refreshEvent() {
+            try {
+                const res = await fetch(`${api}/settings`);
+                const s = await res.json();
+                document.getElementById('ev-name').value = s.event_name || '';
+                document.getElementById('ev-date').value = s.event_date || '';
+            } catch (e) {}
+        }
+
+        document.getElementById('event-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = [
+                { key: 'event_name', value: document.getElementById('ev-name').value },
+                { key: 'event_date', value: document.getElementById('ev-date').value }
+            ];
+            await fetch(`${api}/settings`, { method: 'POST', headers, body: JSON.stringify(data) });
+            alert('Evento guardado correctamente.');
         };
 
         // PODS

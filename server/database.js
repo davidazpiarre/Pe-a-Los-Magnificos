@@ -36,6 +36,7 @@ async function setupDatabase() {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             year TEXT,
             title TEXT,
+            caption TEXT,
             image TEXT,
             date TEXT
         );
@@ -68,7 +69,13 @@ async function setupDatabase() {
         );
     `);
 
-    // Migración: Asegurar que la columna 'status' existe
+    // Migración: Asegurar que la columna 'caption' existe en gallery
+    try {
+        await db.run("ALTER TABLE gallery ADD COLUMN caption TEXT");
+    } catch (e) {
+        // La columna probablemente ya existe
+    }
+
     try {
         await db.run("ALTER TABLE activities ADD COLUMN status TEXT DEFAULT 'upcoming'");
     } catch (e) {
@@ -91,6 +98,15 @@ async function setupDatabase() {
     const logo2 = await db.get('SELECT * FROM settings WHERE key = ?', ['podcast2_logo']);
     if (!logo2) {
         await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['podcast2_logo', 'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=100&h=100&fit=crop']);
+    }
+
+    const eventName = await db.get('SELECT * FROM settings WHERE key = ?', ['event_name']);
+    if (!eventName) {
+        await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['event_name', 'Fiestas del Pilar 2026']);
+    }
+    const eventDate = await db.get('SELECT * FROM settings WHERE key = ?', ['event_date']);
+    if (!eventDate) {
+        await db.run('INSERT INTO settings (key, value) VALUES (?, ?)', ['event_date', '2026-10-12']);
     }
 
     // Crear un usuario de prueba si no hay ninguno

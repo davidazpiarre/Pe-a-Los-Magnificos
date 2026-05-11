@@ -171,7 +171,7 @@
     <header class="main-header" id="main-header">
         <div class="container header-container">
             <a href="index.html" class="header-logo">
-                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <img src="imagenes/logo-magnificos.png" alt="Logo">
                 <div class="header-logo-text">
                     PEÑA <span>MAGNÍFICOS</span>
                 </div>
@@ -180,9 +180,22 @@
             <nav class="header-nav">
                 <ul class="header-nav-list">
                     <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="index.html#podcasts-patrocinados" class="nav-link">Podcasts</a></li>
                     <li><a href="index.html#trayectoria" class="nav-link">Trayectoria</a></li>
-                    <li><a href="actividades.html" class="nav-link">Actividades</a></li>
-                    <li><a href="galeria.html" class="nav-link">Galería</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="actividades.html" class="nav-link">Actividades <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="actividades.html?year=2026">2026</a></li>
+                            <li><a href="actividades.html">Años anteriores</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item-dropdown">
+                        <a href="galeria.html" class="nav-link">Galería <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="galeria.html?year=2026">2026</a></li>
+                            <li><a href="galeria.html">Años anteriores</a></li>
+                        </ul>
+                    </li>
                     <li><a href="blog.html" class="nav-link active">Blog</a></li>
                 </ul>
             </nav>
@@ -208,7 +221,7 @@
                 <div class="logo-text" style="text-align: right;">
                     PEÑA <span style="display: block; text-align: right;">LOS MAGNÍFICOS</span>
                 </div>
-                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <img src="imagenes/logo-magnificos.png" alt="Logo">
             </a>
         </div>
 
@@ -352,15 +365,8 @@
         }
     </style>
 
-    <a href="index.html" class="btn-back-float"><i class="fas fa-home"></i></a>
-
-    <footer style="background: #0f172a; color: white; padding: 60px 0; text-align: center;">
-        <div class="container">
-            <img src="imagenes/logo-magnificos.jpg" alt=""
-                style="width: 60px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--primary-blue);">
-            <h2 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">PEÑA LOS MAGNÍFICOS</h2>
-            <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2026 Zaragoza. Tradición y Amistad. | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
-        </div>
+    <footer style="background: #1a1a1a; color: white; padding: 40px 0; text-align: center;">
+        <p>&copy; 2026 Peña Los Magníficos | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
     </footer>
 
     <!-- Login Modal -->

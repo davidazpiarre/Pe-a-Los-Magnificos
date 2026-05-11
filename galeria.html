@@ -11,13 +11,13 @@
         rel="stylesheet">
     <style>
         :root {
-            --gold: #c5a059;
-            --royal-blue: #00459c;
-            --deep-navy: #002d66;
+            --primary-blue: #00459c;
+            --accent-gold: #c5a059;
+            --bg-soft: #f4f7fa;
         }
 
         body {
-            background-color: #f8fafc;
+            background-color: var(--bg-soft);
             font-family: 'Inter', sans-serif;
         }
 
@@ -25,27 +25,16 @@
 
         /* --- Custom Hero --- */
         .galeria-hero-premium {
-            height: 220px;
+            height: 200px;
+            background: linear-gradient(rgba(0, 69, 156, 0.8), rgba(0, 45, 102, 0.9)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1920');
             background-size: cover;
             background-position: center top;
-            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             color: white;
             margin-bottom: 0;
-        }
-
-        .galeria-hero-premium::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 45, 102, 0.85) 0%, rgba(0, 69, 156, 0.6) 100%);
-            z-index: 1;
         }
 
         .hero-inner {
@@ -56,7 +45,7 @@
         }
 
         .year-indicator {
-            background: var(--gold);
+            background: var(--accent-gold);
             color: white;
             padding: 6px 20px;
             border-radius: 100px;
@@ -80,38 +69,37 @@
 
         /* --- Year Selector Bar --- */
         .year-selector-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: -25px auto 50px;
             position: relative;
             z-index: 10;
-            max-width: 1000px;
-            margin: -25px auto 4rem;
             background: white;
             padding: 12px;
             border-radius: 24px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+            max-width: 1000px;
             flex-wrap: wrap;
         }
 
         .year-btn {
+            background: white;
             padding: 12px 25px;
-            border-radius: 14px;
-            text-decoration: none;
-            color: #64748b;
+            border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
             font-weight: 700;
-            transition: all 0.3s ease;
+            color: var(--primary-blue);
+            transition: 0.3s;
+            text-decoration: none;
             font-size: 0.95rem;
         }
 
-        .year-btn:hover {
-            background: #f1f5f9;
-            color: var(--royal-blue);
-        }
-
+        .year-btn:hover,
         .year-btn.active {
-            background: var(--royal-blue);
+            background: var(--primary-blue);
             color: white;
+            transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 69, 156, 0.2);
         }
 
@@ -205,34 +193,12 @@
         .empty-state i {
             font-size: 5rem;
             margin-bottom: 2rem;
-            background: linear-gradient(var(--gold), var(--royal-blue));
+            background: linear-gradient(var(--accent-gold), var(--primary-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             opacity: 0.3;
         }
 
-        /* --- Footer Back --- */
-        .btn-back-float {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 60px;
-            height: 60px;
-            background: var(--royal-blue);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 10px 25px rgba(0, 69, 156, 0.4);
-            z-index: 100;
-            transition: 0.3s;
-        }
-
-        .btn-back-float:hover {
-            transform: rotate(360deg) scale(1.1);
-        }
 
         @media (max-width: 768px) {
             .hero-inner h1 {
@@ -322,7 +288,7 @@
 
         .lightbox-close:hover {
             transform: rotate(90deg) scale(1.2);
-            color: var(--gold);
+            color: var(--accent-gold);
         }
 
         .lightbox-nav {
@@ -346,8 +312,8 @@
         }
 
         .lightbox-nav:hover {
-            background: var(--gold);
-            color: var(--deep-navy);
+            background: var(--accent-gold);
+            color: white;
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -390,7 +356,7 @@
     <header class="main-header" id="main-header">
         <div class="container header-container">
             <a href="index.html" class="header-logo">
-                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <img src="imagenes/logo-magnificos.png" alt="Logo">
                 <div class="header-logo-text">
                     PEÑA <span>MAGNÍFICOS</span>
                 </div>
@@ -399,9 +365,22 @@
             <nav class="header-nav">
                 <ul class="header-nav-list">
                     <li><a href="index.html#inicio" class="nav-link">Inicio</a></li>
+                    <li><a href="index.html#podcasts-patrocinados" class="nav-link">Podcasts</a></li>
                     <li><a href="index.html#trayectoria" class="nav-link">Trayectoria</a></li>
-                    <li><a href="actividades.html" class="nav-link">Actividades</a></li>
-                    <li><a href="galeria.html" class="nav-link active">Galería</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="actividades.html" class="nav-link">Actividades <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="actividades.html?year=2026">2026</a></li>
+                            <li><a href="actividades.html">Años anteriores</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item-dropdown">
+                        <a href="galeria.html" class="nav-link active">Galería <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="galeria.html?year=2026">2026</a></li>
+                            <li><a href="galeria.html">Años anteriores</a></li>
+                        </ul>
+                    </li>
                     <li><a href="blog.html" class="nav-link">Blog</a></li>
                 </ul>
             </nav>
@@ -427,7 +406,7 @@
                 <div class="logo-text" style="text-align: right;">
                     PEÑA <span style="display: block; text-align: right;">LOS MAGNÍFICOS</span>
                 </div>
-                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <img src="imagenes/logo-magnificos.png" alt="Logo">
             </a>
         </div>
 
@@ -447,12 +426,10 @@
         </div>
     </aside>
 
-    <section class="galeria-hero-premium"
-        style="background-image: url('https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=1920');">
+    <section class="galeria-hero-premium">
         <div class="hero-inner">
             <h1 id="gallery-title">Galería de Fotos</h1>
-            <p style="font-size: 1.1rem; opacity: 0.9; font-weight: 300;">Explora los momentos más memorables de nuestra
-                historia.</p>
+            <p style="font-size: 1.1rem; opacity: 0.9; font-weight: 300;">Explora los momentos más memorables de nuestra historia.</p>
         </div>
     </section>
 
@@ -474,16 +451,8 @@
         </main>
     </div>
 
-    <a href="index.html" class="btn-back-float"><i class="fas fa-home"></i></a>
-
-    <footer class="galeria-footer"
-        style="background: var(--deep-navy); color: white; padding: 60px 0; text-align: center;">
-        <div class="container">
-            <img src="imagenes/logo-magnificos.jpg" alt=""
-                style="width: 60px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--gold);">
-            <h2 style="color: white; font-size: 1.5rem; margin-bottom: 10px;">PEÑA LOS MAGNÍFICOS</h2>
-            <p style="opacity: 0.6; font-size: 0.9rem;">&copy; 2026 Zaragoza. Tradición y Amistad. | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
-        </div>
+    <footer style="background: #1a1a1a; color: white; padding: 40px 0; text-align: center;">
+        <p>&copy; 2026 Peña Los Magníficos | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
     </footer>
 
     <!-- Login Modal -->
@@ -515,6 +484,7 @@
             <img src="" alt="" class="lightbox-img" id="lightbox-img">
             <div class="lightbox-caption">
                 <h3 id="lightbox-title">Título</h3>
+                <p id="lightbox-caption" style="font-style: italic; margin-bottom: 5px; color: var(--accent-gold);"></p>
                 <p id="lightbox-date">Fecha</p>
             </div>
         </div>
@@ -564,6 +534,7 @@
                         <div class="photo-overlay">
                             <p>${img.date}</p>
                             <h3>${img.title || `Evento ${year}`}</h3>
+                            ${img.caption ? `<p style="text-transform: none; opacity: 0.9; margin-top: 5px; font-style: italic;">${img.caption}</p>` : ''}
                         </div>
                     </div>
                 `).join('');
@@ -602,6 +573,8 @@
             setTimeout(() => {
                 lbImg.src = imgData.image;
                 lbTitle.innerText = imgData.title || `Evento`;
+                const lbCaption = document.getElementById('lightbox-caption');
+                if (lbCaption) lbCaption.innerText = imgData.caption || '';
                 lbDate.innerText = imgData.date;
                 lbImg.style.opacity = '1';
             }, 150);

@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (targetElement) {
                         e.preventDefault();
                         lenis.scrollTo(targetElement, {
-                            offset: -20,
+                            offset: -130,
                             duration: 1.5
                         });
                     }
@@ -287,6 +287,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('http://localhost:3000/api/activities?year=2025');
             const activities = await res.json();
 
+            // Ordenar: próximamente primero, finalizadas después
+            const getEffectiveStatus = (act) => {
+                let status = act.status || 'upcoming';
+                if (status !== 'past' && act.date) {
+                    const [d, m, y] = act.date.split('/');
+                    const actDate = new Date(y, m - 1, d);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    if (actDate < today) status = 'past';
+                }
+                return status;
+            };
+            activities.sort((a, b) => {
+                const sa = getEffectiveStatus(a) === 'upcoming' ? 0 : 1;
+                const sb = getEffectiveStatus(b) === 'upcoming' ? 0 : 1;
+                return sa - sb;
+            });
+
             if (activities.length === 0) {
                 homeActivitiesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 3rem;">No hay actividades programadas próximamente.</p>';
                 return;
@@ -447,7 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('http://localhost:3000/api/settings?t=' + Date.now());
             const settings = await res.json();
 
-            // Support both old header IDs and new home section IDs
             const updatePodcast = (prefix, linkId, imgId, titleId) => {
                 const link = document.getElementById(linkId);
                 const img = document.getElementById(imgId) || (link ? link.querySelector('img') : null);
@@ -480,24 +497,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadSettings();
 
-    // --- Live Event Countdown (Fiestas del Pilar 2025) ---
+    // --- Live Event Countdown (cargado desde settings) ---
     const countdownEl = document.getElementById('event-countdown');
     if (countdownEl) {
-        const targetDate = new Date('October 11, 2025 00:00:00').getTime();
+        const loadEventCountdown = async () => {
+            try {
+                const res = await fetch('http://localhost:3000/api/settings');
+                const settings = await res.json();
+                const eventName = settings.event_name || 'Próximo Evento';
+                const eventDate = settings.event_date;
 
-        const updateCountdown = () => {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+                if (!eventDate) {
+                    countdownEl.innerText = 'Próximo evento en camino...';
+                    return;
+                }
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-
-            countdownEl.innerText = `Fiestas del Pilar 2025: Faltan ${days}d ${hours}h ${minutes}m`;
+                const dateObj = new Date(eventDate + 'T00:00:00');
+                const formatted = dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+                countdownEl.innerText = `${eventName}: ${formatted}`;
+            } catch (err) {
+                countdownEl.innerText = 'Próximo evento en camino...';
+            }
         };
-
-        setInterval(updateCountdown, 60000); // Update every minute
-        updateCountdown();
+        loadEventCountdown();
     }
 
     // --- SCROLL REVEAL ANIMATIONS ---

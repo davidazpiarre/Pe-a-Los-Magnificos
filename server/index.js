@@ -257,12 +257,12 @@ app.get('/api/gallery', async (req, res) => {
 
 // Añadir foto (Solo Admin)
 app.post('/api/gallery', authenticateToken, isAdmin, async (req, res) => {
-    const { year, title, image } = req.body;
+    const { year, title, caption, image } = req.body;
     if (!year || !image) return res.status(400).json({ message: 'Año e imagen obligatorios' });
 
     try {
         const date = new Date().toLocaleDateString('es-ES');
-        await db.run('INSERT INTO gallery (year, title, image, date) VALUES (?, ?, ?, ?)', [year, title || '', image, date]);
+        await db.run('INSERT INTO gallery (year, title, caption, image, date) VALUES (?, ?, ?, ?, ?)', [year, title || '', caption || '', image, date]);
         res.status(201).json({ message: 'Imagen añadida a la galería' });
     } catch (error) {
         res.status(500).json({ message: 'Error al guardar imagen' });
@@ -272,9 +272,9 @@ app.post('/api/gallery', authenticateToken, isAdmin, async (req, res) => {
 // Editar foto (Solo Admin)
 app.put('/api/gallery/:id', authenticateToken, isAdmin, async (req, res) => {
     const { id } = req.params;
-    const { year, title, image } = req.body;
+    const { year, title, caption, image } = req.body;
     try {
-        await db.run('UPDATE gallery SET year=?, title=?, image=? WHERE id=?', [year, title, image, id]);
+        await db.run('UPDATE gallery SET year=?, title=?, caption=?, image=? WHERE id=?', [year, title, caption, image, id]);
         res.json({ message: 'Imagen actualizada' });
     } catch (error) {
         console.error('Error al editar galería:', error);

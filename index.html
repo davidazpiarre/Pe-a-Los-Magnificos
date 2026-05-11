@@ -41,7 +41,7 @@
     <header class="main-header" id="main-header">
         <div class="container header-container">
             <a href="index.html" class="header-logo">
-                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <img src="imagenes/logo-magnificos.png" alt="Logo">
                 <div class="header-logo-text">
                     PEÑA <span>MAGNÍFICOS</span>
                 </div>
@@ -50,9 +50,22 @@
             <nav class="header-nav">
                 <ul class="header-nav-list">
                     <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                    <li><a href="#podcasts-patrocinados" class="nav-link">Podcasts</a></li>
                     <li><a href="#trayectoria" class="nav-link">Trayectoria</a></li>
-                    <li><a href="actividades.html" class="nav-link">Actividades</a></li>
-                    <li><a href="galeria.html" class="nav-link">Galería</a></li>
+                    <li class="nav-item-dropdown">
+                        <a href="actividades.html" class="nav-link">Actividades <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="actividades.html?year=2026">2026</a></li>
+                            <li><a href="actividades.html">Años anteriores</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item-dropdown">
+                        <a href="galeria.html" class="nav-link">Galería <i class="fas fa-chevron-down"></i></a>
+                        <ul class="nav-dropdown-menu">
+                            <li><a href="galeria.html?year=2026">2026</a></li>
+                            <li><a href="galeria.html">Años anteriores</a></li>
+                        </ul>
+                    </li>
                     <li><a href="blog.html" class="nav-link">Blog</a></li>
                 </ul>
             </nav>
@@ -79,7 +92,7 @@
                 <div class="logo-text" style="text-align: right;">
                     PEÑA <span style="display: block; text-align: right;">LOS MAGNÍFICOS</span>
                 </div>
-                <img src="imagenes/logo-magnificos.jpg" alt="Logo">
+                <img src="imagenes/logo-magnificos.png" alt="Logo">
             </a>
         </div>
 
@@ -133,7 +146,7 @@
         <div class="hero-content container">
             <div class="hero-flex-layout">
                 <div class="hero-brand reveal-zoom">
-                    <img src="imagenes/logo-magnificos.jpg" alt="Logo" class="hero-logo-new">
+                    <img src="imagenes/logo-magnificos.png" alt="Logo" class="hero-logo-new">
                 </div>
                 <div class="hero-text-content">
                     <h1 class="reveal">Peña Los Magníficos</h1>
@@ -237,6 +250,8 @@
             </div>
         </div>
     </section>
+
+
 
     <!-- Nosotros Section -->
     <section class="nosotros section-padding" id="nosotros">
@@ -370,7 +385,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <a href="#" class="logo"><img src="imagenes/logo-magnificos.jpg" alt="Logo" class="logo-img">
+                    <a href="#" class="logo"><img src="imagenes/logo-magnificos.png" alt="Logo" class="logo-img">
                         LOS&nbsp;<span>MAGNÍFICOS</span></a>
                     <p>Pasión por Zaragoza desde 1995. Amistad, cultura y tradición.</p>
                     <div class="social-links">
@@ -396,7 +411,10 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2026 Peña Los Magníficos. Zaragoza, España. | <span id="auth-container-footer"><a href="#" id="login-trigger-footer" style="text-decoration: none; color: inherit; font-weight: 600;">Acceso Administrador</a></span></p>
+                <p>&copy; 2026 Peña Los Magníficos. Zaragoza, España. | <span id="auth-container-footer"><a href="#"
+                            id="login-trigger-footer"
+                            style="text-decoration: none; color: inherit; font-weight: 600;">Acceso
+                            Administrador</a></span></p>
                 <p>Creado por <strong>Manuel Gorostiza Mateo</strong> & <strong>David Azpilicueta Arrechea</strong></p>
             </div>
     </footer>
